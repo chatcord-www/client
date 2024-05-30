@@ -1,6 +1,11 @@
+import { Link } from "@/navigation";
+import { getTranslations } from "next-intl/server";
+import { LangChanger } from "./_components/lang-changer";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
+  const t = await getTranslations("landing");
+
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden">
       <div className="absolute -top-96 start-1/2 flex -translate-x-1/2 transform">
@@ -11,26 +16,23 @@ export default async function Home() {
         <div className="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="mx-auto max-w-2xl text-center">
             <p className="inline-block bg-gradient-to-l from-green-400 to-green-700 bg-clip-text text-sm font-medium text-transparent dark:from-emerald-500 dark:to-emerald-400">
-              Preline: A vision for 2024
+              {t("preline-p")}
             </p>
             <div className="mt-5 max-w-2xl">
               <h1 className="block text-4xl font-semibold text-gray-800 dark:text-neutral-200 md:text-5xl lg:text-6xl">
-                Web Chatting Aplication
+                {t("title")}
               </h1>
             </div>
 
             <div className="mt-5 max-w-3xl">
               <p className="text-lg text-gray-600 dark:text-neutral-400">
-                Our chatting application is built with Drizzle ORM, Next.js,
-                Tailwind CSS, and ShadCN UI, providing a seamless communication
-                experience with a modern interface and efficient performance.
+                {t("description")}
               </p>
             </div>
-            <div className="mt-3 flex justify-center gap-3">
-              <Button size="lg">Get started</Button>
-              <Button size="lg" variant="link">
-                Continue with discord
-              </Button>
+
+            <div className="mt-8 flex justify-center gap-3">
+              <Button size={'lg'}>{t("get-started-btn")}</Button>
+              <Button variant={'link'}>{t("continue-with-dc")}</Button>
             </div>
           </div>
         </div>
