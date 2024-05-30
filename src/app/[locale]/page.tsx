@@ -1,8 +1,9 @@
 import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
+import { LangChanger } from "./_components/lang-changer";
 
 export default async function Home() {
-  const t = await getTranslations();
+  const t = await getTranslations("landing")
 
   return (
     <main className="flex h-screen flex-col items-center justify-center">
@@ -18,19 +19,17 @@ export default async function Home() {
           <div className="mx-auto max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
             <div className="mx-auto max-w-2xl text-center">
               <p className="inline-block bg-gradient-to-l from-blue-600 to-violet-500 bg-clip-text text-sm font-medium text-transparent dark:from-blue-400 dark:to-violet-400">
-                Preline: A vision for 2023
+                {t("preline-p")}
               </p>
               <div className="mt-5 max-w-2xl">
                 <h1 className="block text-4xl font-semibold text-gray-800 dark:text-neutral-200 md:text-5xl lg:text-6xl">
-                  The Intuitive Web Solutions
+                {t("title")}
                 </h1>
               </div>
 
               <div className="mt-5 max-w-3xl">
                 <p className="text-lg text-gray-600 dark:text-neutral-400">
-                  Preline UI is an open-source set of prebuilt UI components,
-                  ready-to-use examples and Figma design system based on the
-                  utility-first Tailwind CSS framework.
+                  {t("description")}
                 </p>
               </div>
 
@@ -39,7 +38,7 @@ export default async function Home() {
                   className="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
                   href="#"
                 >
-                  Get started
+                  {t("get-started-btn")}
                   <svg
                     className="size-4 flex-shrink-0"
                     xmlns="http://www.w3.org/2000/svg"
@@ -48,9 +47,9 @@ export default async function Home() {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
                   >
                     <path d="m9 18 6-6-6-6" />
                   </svg>
@@ -59,13 +58,14 @@ export default async function Home() {
                   className="inline-flex items-center gap-x-2 rounded-lg border border-transparent px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50 dark:text-white dark:hover:bg-neutral-800"
                   href="#"
                 >
-                  Preline Figma
+                  {t("continue-with-dc")}
                 </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
+    <LangChanger />
     </main>
   );
 }
