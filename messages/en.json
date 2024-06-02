@@ -1,8 +1,8 @@
 {
   "landing": {
-    "preline-p": "Preline: A vision for 2024",
-    "title": "The Intuitive Web Solutions",
-    "description": "Preline UI is an open-source set of prebuilt UI components, ready-to-use examples and Figma design system based on the utility-first Tailwind CSS framework.",
+    "preline-p": "Chatcord: A vision for {date}",
+    "title": "Web Chatting Application",
+    "description": "Our chatting application is built with Drizzle ORM, Next.js, Tailwind CSS, and shadcn, providing a seamless communication experience with a modern interface and efficient performance.",
     "get-started-btn": "Get started",
     "continue-with-dc": "Continue with discord"
   },
@@ -14,5 +14,18 @@
   "discovery": {
     "title": "Discovery",
     "input-placeholer": "Explore communities"
+  },
+  "login": {
+    "title": "Welcome back!",
+    "subtitle": "We are happy to see you again on our platform!",
+    "forgot": "Forgot password?",
+    "signup": "Don't have an account? Sign up",
+    "form": {
+      "email": "Email",
+      "password": "Password"
+    },
+    "errors": {
+      "password-short": "Password must be at least 8 characters"
+    }
   }
 }
