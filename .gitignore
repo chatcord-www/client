@@ -41,3 +41,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# Ignore package.json and package-lock.json
+package.json
+package-lock.json
