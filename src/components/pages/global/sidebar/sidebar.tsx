@@ -2,6 +2,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { DmButton } from "./dm-btn";
 import { CreateServerButton } from "./create-server-btn";
 import { ServerIcon, ServerIconProps } from "./server-icon";
+import { DiscoverServersBtn } from "./discover-servers-btn";
+import { AvatarIcon } from "./avatar-icon";
 
 const servers: ServerIconProps[] = [
   {
@@ -19,12 +21,17 @@ export const Sidebar = () => (
       {servers && (
         <>
           {servers.map((server) => (
-            <ServerIcon {...server} key={server.id}/>
+            <ServerIcon {...server} key={server.id} />
           ))}
           <div className="my-2 h-px w-full bg-white/5" />
         </>
       )}
+
       <CreateServerButton />
+      <DiscoverServersBtn />
+      <div className="mt-auto">
+        <AvatarIcon />
+      </div>
     </div>
   </TooltipProvider>
 );

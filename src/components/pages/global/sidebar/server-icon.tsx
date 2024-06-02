@@ -20,16 +20,19 @@ export const ServerIcon = ({ id, image, name }: ServerIconProps) => {
   const pathname = usePathname();
 
   const isSelected = useMemo(() => {
-    return pathname.includes(`/app/${id}`);
+    return pathname.includes(`/app/channels/${id}`);
   }, [pathname]);
 
   return (
-    <Link href={`/app/${id}`}>
+    <Link href={`/app/channels/${id}`}>
       <Tooltip>
         <TooltipContent side="right">{name}</TooltipContent>
         <TooltipTrigger asChild>
           <Button
-            className={cn("relative flex items-center justify-center border overflow-hidden rounded-full p-6", isSelected && "border-primary border")}
+            className={cn(
+              "relative flex items-center justify-center overflow-hidden rounded-full border p-6",
+              isSelected && "rounded-lg bg-primary/40 hover:bg-primary/40",
+            )}
             variant="secondary"
             size="icon"
           >
@@ -43,7 +46,7 @@ export const ServerIcon = ({ id, image, name }: ServerIconProps) => {
                 draggable={false}
               />
             ) : (
-              <span className="select-none uppercase text-xl">{name[0]}</span>
+              <span className="select-none text-xl uppercase">{name[0]}</span>
             )}
           </Button>
         </TooltipTrigger>

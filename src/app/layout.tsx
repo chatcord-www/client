@@ -5,6 +5,7 @@ import { getMessages } from "next-intl/server";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/providers/theme";
+import { Pogressbar } from "@/components/ui/pogressbar";
 
 export const metadata = {
   title: "Chat",
@@ -24,6 +25,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${GeistSans.variable}`}>
       <body>
+        <Pogressbar />
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
             <TRPCReactProvider>{children}</TRPCReactProvider>
