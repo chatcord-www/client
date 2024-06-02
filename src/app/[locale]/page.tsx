@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/pages/global/sidebar/navbar";
+import Navbar from "@/components/main/navbar";
 
 export default async function Home() {
   const t = await getTranslations("landing");

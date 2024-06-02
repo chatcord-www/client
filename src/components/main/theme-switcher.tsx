@@ -1,16 +1,14 @@
-'use client';
-
-import React from 'react';
-import { MoonIcon } from 'lucide-react';
-import { useTheme } from 'next-themes';
+"use client";
+import { MoonIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
-  DropdownMenuRadioItem
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -22,15 +20,13 @@ const ThemeSwitcher: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button>
-        <MoonIcon className="h-6 w-6 text-white" />
-        </button>
+        <Button size='icon' variant='ghost'>
+          <MoonIcon className="h-6 w-6 dark:text-white" />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuRadioGroup value={theme} onValueChange={handleThemeChange}>
-          <DropdownMenuRadioItem value="dark">
-            Dark Theme
-          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">Dark Theme</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="light">
             Light Theme
           </DropdownMenuRadioItem>

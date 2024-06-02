@@ -43,5 +43,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 # Ignore package.json and package-lock.json
-package.json
 package-lock.json
