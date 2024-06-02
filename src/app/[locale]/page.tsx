@@ -1,6 +1,4 @@
-import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
-import { LangChanger } from "./_components/lang-changer";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
@@ -31,8 +29,8 @@ export default async function Home() {
             </div>
 
             <div className="mt-8 flex justify-center gap-3">
-              <Button size={'lg'}>{t("get-started-btn")}</Button>
-              <Button variant={'link'}>{t("continue-with-dc")}</Button>
+              <Button size={"lg"}>{t("get-started-btn")}</Button>
+              <Button variant={"link"}>{t("continue-with-dc")}</Button>
             </div>
           </div>
         </div>
