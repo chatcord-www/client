@@ -4,14 +4,14 @@
     "title": "The Intuitive Web Solutions",
     "description": "Preline UI is an open-source set of prebuilt UI components, ready-to-use examples and Figma design system based on the utility-first Tailwind CSS framework.",
     "get-started-btn": "Get started",
-    "continue-with-dc": "Continue with discord" 
+    "continue-with-dc": "Continue with discord"
   },
   "sidebar": {
     "dm": "Dirrect Messages",
     "create-server": "Create Server",
-    "discover": "Discover servers" 
+    "discovery": "Discover servers"
   },
-  "discover": {
+  "discovery": {
     "title": "Discovery",
     "input-placeholer": "Explore communities"
   }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -16,13 +16,13 @@ export const DiscoverServersBtn = () => {
   const pathname = usePathname();
 
   const isInDiscover = useMemo(() => {
-    return pathname.includes("/app/discover");
+    return pathname.includes("/app/discovery");
   }, [pathname]);
-  
+
   return (
-    <Link href="/app/discover" className="mt-2">
+    <Link href="/app/discovery" className="mt-2">
       <Tooltip>
-        <TooltipContent side="right">{t("discover")}</TooltipContent>
+        <TooltipContent side="right">{t("discovery")}</TooltipContent>
         <TooltipTrigger asChild>
           <Button
             className={cn(

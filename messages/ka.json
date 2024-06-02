@@ -9,9 +9,9 @@
   "sidebar": {
     "dm": "პირადი შეტყობინებები",
     "create-server": "შექმენი სერვერი",
-    "discover": "აღმოაჩინე სერვერები"
+    "discovery": "აღმოაჩინე სერვერები"
   },
-  "discover": {
+  "discovery": {
     "title": "აღმოაჩინე",
     "input-placeholer": "იპოვეთ საზოგადოებები"
   }
