@@ -10,5 +10,9 @@
     "dm": "Dirrect Messages",
     "create-server": "Create Server",
     "discover": "Discover servers" 
+  },
+  "discover": {
+    "title": "Discovery",
+    "input-placeholer": "Explore communities"
   }
 }
