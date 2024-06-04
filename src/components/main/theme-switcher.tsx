@@ -20,7 +20,7 @@ const ThemeSwitcher: React.FC = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild >
         <Button
           variant="ghost"
           size="icon"

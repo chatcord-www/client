@@ -25,7 +25,40 @@
       "password": "Password"
     },
     "errors": {
+      "email": "Email is invalid",
+      "required": "This field is required",
       "password-short": "Password must be at least 8 characters"
-    }
+    },
+    "submit": "Log in"
+  },
+  "signup": {
+    "title": "Hello there!",
+    "subtitle": "Creating account is absolutely free!",
+    "login": "Already have an account? Log in",
+    "form": {
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "repeat-password": "Repeat Password"
+    },
+    "errors": {
+      "email": "Email is invalid",
+      "password-short": "Password must be at least 8 characters",
+      "password-not-match": "Repeated password does not match password",
+      "username-min": "Username must contain at least 4 characters",
+      "required": "This field is required"
+    },
+    "submit": "Sign up"
+  },
+  "recover": {
+    "title": "Recover password",
+    "subtitle": "Input email of your lost account",
+    "form": {
+      "email": "Email"
+    },
+    "errors": {
+      "email": "Email is invalid"
+    },
+    "submit": "Recover"
   }
 }
