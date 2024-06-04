@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +9,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -21,19 +21,17 @@ const ThemeSwitcher: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center justify-center">
-          {theme === 'light' ? (
-            <Sun />
-          ) : (
-            <Moon />
-          )}
-        </button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="flex items-center justify-center"
+        >
+          {theme === "light" ? <Sun /> : <Moon />}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuRadioGroup value={theme} onValueChange={handleThemeChange}>
-          <DropdownMenuRadioItem value="dark">
-            Dark Theme
-          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">Dark Theme</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="light">
             Light Theme
           </DropdownMenuRadioItem>

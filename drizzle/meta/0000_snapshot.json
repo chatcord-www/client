@@ -1,5 +1,5 @@
 {
-  "id": "ca7bf68c-72db-4f9f-8f5e-e24a93614722",
+  "id": "5960c0ba-0b31-4c75-a87e-5dce626ddb7d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -110,76 +110,6 @@
       },
       "uniqueConstraints": {}
     },
-    "public.client_post": {
-      "name": "client_post",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "createdById": {
-          "name": "createdById",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "createdById_idx": {
-          "name": "createdById_idx",
-          "columns": [
-            "createdById"
-          ],
-          "isUnique": false
-        },
-        "name_idx": {
-          "name": "name_idx",
-          "columns": [
-            "name"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "client_post_createdById_client_user_id_fk": {
-          "name": "client_post_createdById_client_user_id_fk",
-          "tableFrom": "client_post",
-          "tableTo": "client_user",
-          "columnsFrom": [
-            "createdById"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
     "public.client_session": {
       "name": "client_session",
       "schema": "",
@@ -262,6 +192,12 @@
         "image": {
           "name": "image",
           "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discriminator": {
+          "name": "discriminator",
+          "type": "varchar(4)",
           "primaryKey": false,
           "notNull": false
         }

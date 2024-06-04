@@ -1,6 +1,6 @@
 {
-  "id": "33b9426a-9340-49a8-b9b6-5245a2b64c44",
-  "prevId": "ca7bf68c-72db-4f9f-8f5e-e24a93614722",
+  "id": "7d063d0d-9276-4a65-bdbc-b60f5ca084ab",
+  "prevId": "5960c0ba-0b31-4c75-a87e-5dce626ddb7d",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -95,7 +95,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -192,6 +192,12 @@
         "image": {
           "name": "image",
           "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discriminator": {
+          "name": "discriminator",
+          "type": "varchar(4)",
           "primaryKey": false,
           "notNull": false
         }
