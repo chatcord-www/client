@@ -12,6 +12,7 @@ import { useState } from "react";
 export const SingupForm = () => {
   const t = useTranslations("signup");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [repeatPasswordVisible, setRepeatPasswordVisible] = useState<boolean>(false);
   const { handleSubmit, control } = useForm<SignupFormType>({
     resolver: zodResolver(SignupFormSchema),
   });
@@ -88,11 +89,11 @@ export const SingupForm = () => {
             <div className="relative flex items-center">
               <Input
                 {...field}
-                type={!passwordVisible ? "password" : "text"}
+                type={!repeatPasswordVisible ? "password" : "text"}
                 className="pr-8"
               />
               <Eye
-                onClick={() => setPasswordVisible((prev) => !prev)}
+                onClick={() => setRepeatPasswordVisible((prev) => !prev)}
                 strokeWidth={1}
                 size={18}
                 className="absolute right-2 cursor-pointer"

@@ -1,4 +1,4 @@
-import { z, ZodType } from "zod";
+import { z, type ZodType } from "zod";
 
 export type SignupFormType = {
   email: string;
@@ -13,17 +13,14 @@ export const SignupFormSchema: ZodType<SignupFormType> = z
     password: z
       .string({ message: "required" })
       .min(8, { message: "password-short" }),
-    repeat_password: z.string({ message: "required" }).min(8, { message: "password-not-match" }),
+    repeat_password: z
+      .string({ message: "required" })
+      .min(8, { message: "password-not-match" }),
     username: z
       .string({ message: "required" })
       .min(4, { message: "username-min" }),
   })
-  .superRefine(({ repeat_password, password }, ctx) => {
-    if (repeat_password !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "password-not-match",
-        path: ["confirmPassword"],
-      });
-    }
+  .refine(({ repeat_password, password }) => password === repeat_password, {
+    message: "password-not-match",
+    path: ["repeat_password"],
   });
