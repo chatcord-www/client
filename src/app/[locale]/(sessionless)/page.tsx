@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/navigation";
+import DiscordSignInButton from '@/components/main/sign'
 
 export default async function Home() {
   const t = await getTranslations("landing");
@@ -28,7 +29,7 @@ export default async function Home() {
               <Link href="/login">
                 <Button size="lg">{t("get-started-btn")}</Button>
               </Link>
-              <Button variant={"link"}>{t("continue-with-dc")}</Button>
+              <DiscordSignInButton buttonText={t("continue-with-dc")} />
             </div>
           </div>
         </div>
@@ -36,3 +37,4 @@ export default async function Home() {
     </main>
   );
 }
+ 
