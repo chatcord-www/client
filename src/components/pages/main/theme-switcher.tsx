@@ -9,7 +9,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 const ThemeSwitcher: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -20,7 +20,7 @@ const ThemeSwitcher: React.FC = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild >
+      <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="icon"

@@ -17,11 +17,17 @@ import {
 } from "@/server/db/schema";
 import { and, eq } from "drizzle-orm";
 
+export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";
+
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
       discriminator: string;
+      activity: USER_STATUS_ENUM;
+      status: { emoji: string; title: string };
+      aboutMe: string;
+      createdAt: Date
     } & DefaultSession["user"];
   }
 }
@@ -50,13 +56,24 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: async ({ session, user }) => {
+      const profilePreferences = await db.query.users.findFirst({
+        columns: { id: true, status: true, activity: true, aboutMe: true, createdAt: true },
+        where: eq(users.id, user.id),
+      });
+
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          activity: profilePreferences?.activity,
+          status: profilePreferences?.status,
+          aboutMe: profilePreferences?.aboutMe,
+          createdAt: profilePreferences?.createdAt
+        },
+      };
+    },
   },
   adapter: DrizzleAdapter(db, {
     usersTable: users,

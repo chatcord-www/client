@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/main/navbar";
+import { Navbar } from "@/components/pages/main/navbar";
 import { redirect } from "@/navigation";
 import { getServerAuthSession } from "@/server/auth";
 import type { PropsWithChildren } from "react";
@@ -6,8 +6,8 @@ import type { PropsWithChildren } from "react";
 const Layout = async ({ children }: PropsWithChildren) => {
   const session = await getServerAuthSession();
 
-  if(session){
-    redirect('/app')
+  if (session) {
+    redirect("/app");
   }
 
   return (

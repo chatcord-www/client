@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/navigation";
-import DiscordSignInButton from '@/components/main/sign'
+import DiscordSignInButton from '@/components/pages/main/sign'
 
 export default async function Home() {
   const t = await getTranslations("landing");

@@ -8,10 +8,18 @@ import {
   timestamp,
   varchar,
   uniqueIndex,
+  pgEnum,
+  json,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
 export const createTable = pgTableCreator((name) => `client_${name}`);
+export const activityEnum = pgEnum("activity", [
+  "ONLINE",
+  "IDLE",
+  "DND",
+  "OFFLINE",
+]);
 
 export const users = createTable(
   "user",
@@ -28,6 +36,13 @@ export const users = createTable(
     }).default(sql`CURRENT_TIMESTAMP`),
     image: varchar("image", { length: 255 }),
     discriminator: varchar("discriminator", { length: 4 }),
+    activity: activityEnum("activity").default("ONLINE"),
+    aboutMe: varchar("about_me", { length: 255 }),
+    status: json("status").$type<{ emoji: string; title: string }>(),
+    createdAt: timestamp("createdAt", {
+      mode: "date",
+      withTimezone: true,
+    }).default(sql`CURRENT_TIMESTAMP`),
   },
   (users) => ({
     uniqueUserDiscriminator: uniqueIndex("unique_user_discriminator").on(
