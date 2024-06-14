@@ -6,10 +6,23 @@
     "get-started-btn": "დაიწყე",
     "continue-with-dc": "გააგრძელე დისქორდით"
   },
+  "status": {
+    "online": "ონლაინი",
+    "dnd": "არ შემაწუხო",
+    "idle": "უსაქმური",
+    "offline": "გასულია"
+  },
   "sidebar": {
     "dm": "პირადი შეტყობინებები",
     "create-server": "შექმენი სერვერი",
-    "discovery": "აღმოაჩინე სერვერები"
+    "discovery": "აღმოაჩინე სერვერები",
+    "profile-menu": {
+      "about-me": "ჩემს შესახებ",
+      "member-since": "მომხმარებლია",
+      "copy-user-id": "ამოაკოპირე მომხმარებლის აიდი",
+      "set-custom-status": "დააყენე სასურველი სტატუსი",
+      "member-since-date": "{date}-დან"
+    }
   },
   "discovery": {
     "title": "აღმოაჩინე",

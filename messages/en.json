@@ -6,10 +6,23 @@
     "get-started-btn": "Get started",
     "continue-with-dc": "Continue with discord"
   },
+  "status": {
+    "online": "Online",
+    "dnd": "Do not disturb",
+    "idle": "Idle",
+    "offline": "Offline"
+  },
   "sidebar": {
     "dm": "Dirrect Messages",
     "create-server": "Create Server",
-    "discovery": "Discover servers"
+    "discovery": "Discover servers",
+    "profile-menu": {
+      "about-me": "About me",
+      "member-since": "Member since",
+      "copy-user-id": "Copy User ID",
+      "set-custom-status": "Set Custom Status",
+      "member-since-date": "{date}"
+    }
   },
   "discovery": {
     "title": "Discovery",
