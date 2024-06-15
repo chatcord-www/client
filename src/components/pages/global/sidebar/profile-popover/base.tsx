@@ -1,5 +1,5 @@
 "use client";
-import { Smile, Copy, CircleSlash, Moon, ChevronRight } from "lucide-react";
+import { Smile, Copy, CircleSlash, Moon, ChevronRight, Settings  } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { LocalesType } from "@/i18n";
 import { useTranslations } from "next-intl";
 import { ActivityProfilePopover } from "./activity";
+import { Link } from "@/navigation";
 
 export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";
 
@@ -22,6 +23,7 @@ export const BaseProfilePopover = ({
   locale,
   children,
 }: PropsWithChildren<{ locale: LocalesType }>) => {
+  
   const { data: session } = useSession();  
   const [clientActivity, setClientActivity] = useState<USER_STATUS_ENUM>(
     session?.user.activity ?? "ONLINE",
@@ -140,6 +142,15 @@ export const BaseProfilePopover = ({
             <Copy size={16} />
             <span>{t("sidebar.profile-menu.copy-user-id")}</span>
           </Button>
+          <Link href="/app/settings">
+          <Button
+            variant="ghost"
+            className="justify-start gap-2 px-3 text-left text-xs w-80"
+          >
+            <Settings size={16}  />
+            <span>{t("sidebar.profile-menu.settings")}</span>
+          </Button>
+             </Link>
         </div>
       </PopoverContent>
     </Popover>

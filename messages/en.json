@@ -21,7 +21,8 @@
       "member-since": "Member since",
       "copy-user-id": "Copy User ID",
       "set-custom-status": "Set Custom Status",
-      "member-since-date": "{date}"
+      "member-since-date": "{date}",
+      "settings":"Settings"
     }
   },
   "discovery": {
