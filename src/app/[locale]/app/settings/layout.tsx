@@ -13,11 +13,6 @@ const routes = [
 ] as const;
 
 export default async function SettingsLayout({ children }: PropsWithChildren) {
-  const referer = headers().get("referer");
-  const currentRoute = referer?.split("/settings/")[1];
-
-  console.log({ currentRoute });
-
   return (
     <div className="p-4">
       <div className="flex flex-col gap-4 md:flex-row md:justify-start md:gap-14">
@@ -28,10 +23,7 @@ export default async function SettingsLayout({ children }: PropsWithChildren) {
           <div className="mt-2 flex flex-col">
             {routes.map(({ name, route }) => (
               <Link href={`/app/settings/${route}`} key={route}>
-                <Button
-                  variant={route === currentRoute ? "secondary" : "ghost"}
-                  className="w-full justify-start"
-                >
+                <Button variant="ghost" className="w-full justify-start">
                   {name}
                 </Button>
               </Link>
