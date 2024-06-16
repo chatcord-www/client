@@ -1,3 +1,5 @@
-export default function SettingsPage() {
-  return <div>This is Settings Page </div>;
+import { redirect } from "@/navigation";
+
+export default function SettingsRedirect() {
+  redirect("/app/settings/profile");
 }

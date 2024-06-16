@@ -1,5 +1,12 @@
 "use client";
-import { Smile, Copy, CircleSlash, Moon, ChevronRight } from "lucide-react";
+import {
+  Smile,
+  Copy,
+  CircleSlash,
+  Moon,
+  ChevronRight,
+  Settings,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -15,6 +22,9 @@ import { format } from "date-fns";
 import { LocalesType } from "@/i18n";
 import { useTranslations } from "next-intl";
 import { ActivityProfilePopover } from "./activity";
+import { Link } from "@/navigation";
+import { Profile } from "../../profile";
+import { Session } from "next-auth";
 
 export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";
 
@@ -22,7 +32,7 @@ export const BaseProfilePopover = ({
   locale,
   children,
 }: PropsWithChildren<{ locale: LocalesType }>) => {
-  const { data: session } = useSession();  
+  const { data: session } = useSession();
   const [clientActivity, setClientActivity] = useState<USER_STATUS_ENUM>(
     session?.user.activity ?? "ONLINE",
   );
@@ -74,45 +84,8 @@ export const BaseProfilePopover = ({
         className="relative overflow-hidden p-0"
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
-        <div className="pb-12">
-          <div className="h-16 w-full bg-purple-400" />
-          <img
-            src={session?.user.image ?? ""}
-            className="absolute left-3 top-5 size-[90px] rounded-full border-[6px] border-popover"
-          />
-        </div>
-        <div className="px-3 py-1">
-          <h3 className="text-lg font-semibold">{session?.user.name}</h3>
-          {session?.user.aboutMe && (
-            <>
-              <Separator className="mt-2" />
-              <div>
-                <Label className="text-xs font-semibold uppercase">
-                  {t("sidebar.profile-menu.about-me")}
-                </Label>
-                <p className="break-words text-xs text-zinc-300">
-                  {session?.user.aboutMe}
-                </p>
-              </div>
-            </>
-          )}
-          <Separator className="mt-2" />
-          <div>
-            <Label className="text-xs font-semibold uppercase">
-              {t("sidebar.profile-menu.member-since")}
-            </Label>
-            {session?.user.createdAt && (
-              <p className="break-words text-xs text-zinc-300">
-                {t("sidebar.profile-menu.member-since-date", {
-                  date: format(session.user.createdAt, "PP", {
-                    locale: currentLocale,
-                  }),
-                })}
-              </p>
-            )}
-          </div>
-          <Separator className="mt-2" />
-        </div>
+        <Profile {...session!} />
+        <Separator className="mt-2" />
         <div className="flex flex-col pb-3">
           <ActivityProfilePopover
             activity={clientActivity}
@@ -120,10 +93,10 @@ export const BaseProfilePopover = ({
           >
             <Button
               variant="ghost"
-              className="justify-start gap-2 px-3 text-left text-xs relative focus:ring-0"
+              className="relative justify-start gap-2 px-3 text-left text-xs focus:ring-0"
             >
               {userStatus}
-              <ChevronRight className="absolute right-2" size={15}/>
+              <ChevronRight className="absolute right-2" size={15} />
             </Button>
           </ActivityProfilePopover>
           <Button
@@ -140,6 +113,15 @@ export const BaseProfilePopover = ({
             <Copy size={16} />
             <span>{t("sidebar.profile-menu.copy-user-id")}</span>
           </Button>
+          <Link href="/app/settings">
+            <Button
+              variant="ghost"
+              className="w-80 justify-start gap-2 px-3 text-left text-xs"
+            >
+              <Settings size={16} />
+              <span>{t("sidebar.profile-menu.settings")}</span>
+            </Button>
+          </Link>
         </div>
       </PopoverContent>
     </Popover>

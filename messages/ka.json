@@ -21,7 +21,8 @@
       "member-since": "მომხმარებლია",
       "copy-user-id": "ამოაკოპირე მომხმარებლის აიდი",
       "set-custom-status": "დააყენე სასურველი სტატუსი",
-      "member-since-date": "{date}-დან"
+      "member-since-date": "{date}-დან",
+      "settings":"პარამეტრები"
     }
   },
   "discovery": {
