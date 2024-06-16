@@ -12,7 +12,7 @@ export default async function DiscordSignOutButton({
   };
 
   return (
-    <Button variant={"destructive"} onClick={handleDiscordSignIn}>
+    <Button onClick={handleDiscordSignIn} className="text-red-500 justify-start hover:text-red-500" variant={'ghost'}>
       {buttonText}
     </Button>
   );
