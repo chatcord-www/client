@@ -1,7 +1,8 @@
 import DiscordSignOutButton from "@/components/pages/main/sign-out";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Link } from "@/navigation";
+import { Link, redirect } from "@/navigation";
+import { getServerAuthSession } from "@/server/auth";
 import { PropsWithChildren } from "react";
 
 const routes = [
@@ -12,6 +13,12 @@ const routes = [
 ] as const;
 
 export default async function SettingsLayout({ children }: PropsWithChildren) {
+  const session = await getServerAuthSession();
+
+  if (!session?.user) {
+    redirect("/");
+  }
+
   return (
     <div className="p-4">
       <div className="flex flex-col gap-4 md:flex-row md:justify-start md:gap-14">

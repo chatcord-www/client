@@ -1,4 +1,4 @@
-import DiscordSignInButton from "@/components/pages/main/sign";
+import { DiscordSignInButton } from "@/components/pages/main/sign";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
@@ -29,7 +29,7 @@ export default async function Home() {
               <Link href="/login">
                 <Button size="lg">{t("get-started-btn")}</Button>
               </Link>
-              <DiscordSignInButton buttonText={t("continue-with-dc")} />
+              <DiscordSignInButton />
             </div>
           </div>
         </div>

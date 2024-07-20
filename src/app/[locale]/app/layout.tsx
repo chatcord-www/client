@@ -15,13 +15,16 @@ export default async function AppLayout({
   params: { locale: LocalesType };
 }) {
   const session = await getServerAuthSession();
+
+  if (!session?.user) {
+    redirect("/");
+  }
+  
   const serversList = await db.query.servers.findMany({
     where: eq(servers.ownerId, session?.user.id as string),
   });
 
-  if (!session) {
-    redirect("/");
-  }
+
   return (
     <main className="flex w-full">
       <Sidebar locale={props.params.locale} servers={serversList} />
