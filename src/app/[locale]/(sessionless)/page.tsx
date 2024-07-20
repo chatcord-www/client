@@ -1,7 +1,7 @@
-import { getTranslations } from "next-intl/server";
+import DiscordSignInButton from "@/components/pages/main/sign";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/navigation";
-import DiscordSignInButton from '@/components/pages/main/sign'
+import { getTranslations } from "next-intl/server";
 
 export default async function Home() {
   const t = await getTranslations("landing");
@@ -37,4 +37,3 @@ export default async function Home() {
     </main>
   );
 }
- 

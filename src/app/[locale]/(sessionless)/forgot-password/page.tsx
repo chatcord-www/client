@@ -2,7 +2,7 @@ import { RecoverPasswordForm } from "@/components/pages/recover-password/form";
 import { getTranslations } from "next-intl/server";
 
 export default async function ForgotPasswordPage() {
-  const t = await getTranslations('recover');
+  const t = await getTranslations("recover");
 
   return (
     <main className="z-10 flex min-h-screen w-full flex-col items-center justify-center">

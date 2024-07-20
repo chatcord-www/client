@@ -1,18 +1,19 @@
 "use client";
-import { useForm, Controller } from "react-hook-form";
-import { SignupFormSchema, SignupFormType } from "./types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { SignupFormSchema, SignupFormType } from "./types";
 
 export const SingupForm = () => {
   const t = useTranslations("signup");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [repeatPasswordVisible, setRepeatPasswordVisible] = useState<boolean>(false);
+  const [repeatPasswordVisible, setRepeatPasswordVisible] =
+    useState<boolean>(false);
   const { handleSubmit, control } = useForm<SignupFormType>({
     resolver: zodResolver(SignupFormSchema),
   });

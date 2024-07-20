@@ -1,5 +1,5 @@
 {
-  "id": "5960c0ba-0b31-4c75-a87e-5dce626ddb7d",
+  "id": "a8c30e7b-1d5b-42cd-b33e-e5bc396c2241",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -95,7 +95,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -108,6 +108,61 @@
           ]
         }
       },
+      "uniqueConstraints": {}
+    },
+    "public.client_server": {
+      "name": "client_server",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icon": {
+          "name": "icon",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "public": {
+          "name": "public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "ownerId": {
+          "name": "ownerId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_server_ownerId_client_user_id_fk": {
+          "name": "client_server_ownerId_client_user_id_fk",
+          "tableFrom": "client_server",
+          "tableTo": "client_user",
+          "columnsFrom": [
+            "ownerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.client_session": {
@@ -200,10 +255,95 @@
           "type": "varchar(4)",
           "primaryKey": false,
           "notNull": false
+        },
+        "activity": {
+          "name": "activity",
+          "type": "activity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ONLINE'"
+        },
+        "about_me": {
+          "name": "about_me",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "unique_user_discriminator": {
+          "name": "unique_user_discriminator",
+          "columns": [
+            "name",
+            "discriminator"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.client_users_to_servers": {
+      "name": "client_users_to_servers",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "serverId": {
+          "name": "serverId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "client_users_to_servers_userId_client_user_id_fk": {
+          "name": "client_users_to_servers_userId_client_user_id_fk",
+          "tableFrom": "client_users_to_servers",
+          "tableTo": "client_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "client_users_to_servers_serverId_client_server_id_fk": {
+          "name": "client_users_to_servers_serverId_client_server_id_fk",
+          "tableFrom": "client_users_to_servers",
+          "tableTo": "client_server",
+          "columnsFrom": [
+            "serverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -244,7 +384,18 @@
       "uniqueConstraints": {}
     }
   },
-  "enums": {},
+  "enums": {
+    "public.activity": {
+      "name": "activity",
+      "schema": "public",
+      "values": [
+        "ONLINE",
+        "IDLE",
+        "DND",
+        "OFFLINE"
+      ]
+    }
+  },
   "schemas": {},
   "_meta": {
     "columns": {},

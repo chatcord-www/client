@@ -7,16 +7,15 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Link, usePathname } from "@/navigation";
-import Image from "next/image";
 import { useMemo } from "react";
 
 export type ServerIconProps = {
-  id: string;
-  name: string;
-  image: string;
+  id: string | null;
+  name: string | null;
+  icon: string | null;
 };
 
-export const ServerIcon = ({ id, image, name }: ServerIconProps) => {
+export const ServerIcon = ({ id, icon, name }: ServerIconProps) => {
   const pathname = usePathname();
 
   const isSelected = useMemo(() => {
@@ -36,17 +35,15 @@ export const ServerIcon = ({ id, image, name }: ServerIconProps) => {
             variant="secondary"
             size="icon"
           >
-            {image ? (
-              <Image
-                src={image}
-                width={100}
-                height={100}
-                alt={name}
+            {icon ? (
+              <img
+                src={icon}
+                alt={name as string}
                 className="absolute h-full w-full flex-none object-cover"
                 draggable={false}
               />
             ) : (
-              <span className="select-none text-xl uppercase">{name[0]}</span>
+              <span className="select-none text-xl uppercase">{name?.[0]}</span>
             )}
           </Button>
         </TooltipTrigger>

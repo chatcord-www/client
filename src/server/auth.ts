@@ -16,6 +16,7 @@ import {
   verificationTokens,
 } from "@/server/db/schema";
 import { and, eq } from "drizzle-orm";
+import { encode } from "next-auth/jwt";
 
 export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";
 
@@ -27,8 +28,9 @@ declare module "next-auth" {
       activity: USER_STATUS_ENUM;
       status: { emoji: string; title: string };
       aboutMe: string;
-      createdAt: Date
+      createdAt: Date;
     } & DefaultSession["user"];
+    cookies: string;
   }
 }
 
@@ -55,23 +57,47 @@ export const authOptions: NextAuthOptions = {
         .where(eq(users.id, user.id));
     },
   },
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session: async ({ session, user }) => {
+    jwt: async ({ token }) => {
+      const cookies = await encode({
+        secret: env.NEXTAUTH_SECRET as string,
+        token: {
+          sub: token.sub,
+        },
+      });
+
+      if (cookies) {
+        token.cookies = cookies;
+      }
+
+      return token;
+    },
+    session: async ({ session, token }) => {
       const profilePreferences = await db.query.users.findFirst({
-        columns: { id: true, status: true, activity: true, aboutMe: true, createdAt: true },
-        where: eq(users.id, user.id),
+        columns: {
+          id: true,
+          status: true,
+          activity: true,
+          aboutMe: true,
+          createdAt: true,
+        },
+        where: eq(users.id, token.sub as string),
       });
 
       return {
         ...session,
         user: {
           ...session.user,
-          id: user.id,
+          id: token.sub,
           activity: profilePreferences?.activity,
           status: profilePreferences?.status,
           aboutMe: profilePreferences?.aboutMe,
-          createdAt: profilePreferences?.createdAt
+          createdAt: profilePreferences?.createdAt,
         },
+        cookies: token.cookies,
       };
     },
   },

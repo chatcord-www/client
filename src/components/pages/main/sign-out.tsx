@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
@@ -12,7 +12,11 @@ export default async function DiscordSignOutButton({
   };
 
   return (
-    <Button onClick={handleDiscordSignIn} className="text-red-500 justify-start hover:text-red-500" variant={'ghost'}>
+    <Button
+      onClick={handleDiscordSignIn}
+      className="text-red-500 justify-start hover:text-red-500"
+      variant={"ghost"}
+    >
       {buttonText}
     </Button>
   );

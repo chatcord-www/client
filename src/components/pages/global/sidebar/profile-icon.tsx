@@ -1,7 +1,7 @@
 "use client";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LocalesType } from "@/i18n";
+import { useSession } from "next-auth/react";
 import { BaseProfilePopover } from "./profile-popover/base";
 
 export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";

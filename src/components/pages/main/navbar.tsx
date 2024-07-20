@@ -1,7 +1,7 @@
 import { Link } from "@/navigation";
 import dynamic from "next/dynamic";
-const ThemeSwitcher = dynamic(() => import("./theme-switcher"));
 import Image from "next/image";
+const ThemeSwitcher = dynamic(() => import("./theme-switcher"));
 
 const Navbar: React.FC = () => {
   return (

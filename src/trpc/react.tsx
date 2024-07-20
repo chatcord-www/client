@@ -4,10 +4,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
+import axios from "axios";
 import { useState } from "react";
 import SuperJSON from "superjson";
 
+import { env } from "@/env";
 import { type AppRouter } from "@/server/api/root";
+import { getSession } from "next-auth/react";
 
 const createQueryClient = () => new QueryClient();
 
@@ -62,3 +65,19 @@ function getBaseUrl() {
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 }
+
+export const instance = async () => {
+  const instance = axios.create({
+    baseURL: env.NEXT_PUBLIC_API,
+  });
+
+  instance.interceptors.request.use(async (request) => {
+    const session = await getSession();
+    if (session) {
+      request.headers.Authorization = `Bearer ${session.cookies}`;
+    }
+    return request;
+  });
+
+  return instance;
+};

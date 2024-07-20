@@ -1,14 +1,14 @@
 "use client";
-import { useForm, Controller } from "react-hook-form";
-import { LoginFormSchema, LoginFormType } from "./types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Link } from "@/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { LoginFormSchema, LoginFormType } from "./types";
 
 export const LoginForm = () => {
   const t = useTranslations("login");

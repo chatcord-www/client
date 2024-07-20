@@ -1,6 +1,10 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Link } from "@/navigation";
 import { MessageCircle } from "lucide-react";
@@ -9,7 +13,7 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 export const DmButton = () => {
-  const t = useTranslations('sidebar')
+  const t = useTranslations("sidebar");
   const pathname = usePathname();
 
   const isInDirects = useMemo(() => {

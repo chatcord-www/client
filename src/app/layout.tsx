@@ -3,10 +3,10 @@ import { GeistSans } from "geist/font/sans";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
-import { TRPCReactProvider } from "@/trpc/react";
+import { SessionProvider } from "@/components/providers/session";
 import { ThemeProvider } from "@/components/providers/theme";
 import { Pogressbar } from "@/components/ui/pogressbar";
-import { SessionProvider } from "@/components/providers/session";
+import { TRPCReactProvider } from "@/trpc/react";
 
 export const metadata = {
   title: "Chat",

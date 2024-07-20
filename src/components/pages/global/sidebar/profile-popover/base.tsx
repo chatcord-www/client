@@ -1,30 +1,27 @@
 "use client";
-import {
-  Smile,
-  Copy,
-  CircleSlash,
-  Moon,
-  ChevronRight,
-  Settings,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { PropsWithChildren, useMemo, useState } from "react";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { enUS, ka } from "date-fns/locale";
-import { format } from "date-fns";
 import { LocalesType } from "@/i18n";
-import { useTranslations } from "next-intl";
-import { ActivityProfilePopover } from "./activity";
 import { Link } from "@/navigation";
+import { enUS, ka } from "date-fns/locale";
+import {
+  ChevronRight,
+  CircleSlash,
+  Copy,
+  Moon,
+  Settings,
+  Smile,
+} from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { PropsWithChildren, useMemo, useState } from "react";
 import { Profile } from "../../profile";
-import { Session } from "next-auth";
+import { ActivityProfilePopover } from "./activity";
 
 export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";
 

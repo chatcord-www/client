@@ -6,6 +6,19 @@
     "get-started-btn": "Get started",
     "continue-with-dc": "Continue with discord"
   },
+  "create-server": {
+    "remove": "Remove",
+    "name": "Name",
+    "public": "Public",
+    "discovery-info": "Switching it on will make your server appear in discovery",
+    "create": "Create",
+    "title": "Customize your server",
+    "description": "Give your server name and icon",
+    "errors": {
+      "required": "Server name is required",
+      "min-3": "Server name must include at least 3 characters"
+    }
+  },
   "status": {
     "online": "Online",
     "dnd": "Do not disturb",
@@ -22,7 +35,7 @@
       "copy-user-id": "Copy User ID",
       "set-custom-status": "Set Custom Status",
       "member-since-date": "{date}",
-      "settings":"Settings"
+      "settings": "Settings"
     }
   },
   "discovery": {

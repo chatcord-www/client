@@ -1,11 +1,11 @@
-'use client'
-import { useTranslations } from "next-intl";
-import { RecoverFormSchema, RecoverFormType } from "./types";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+"use client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { Controller, useForm } from "react-hook-form";
+import { RecoverFormSchema, type RecoverFormType } from "./types";
 
 export const RecoverPasswordForm = () => {
   const t = useTranslations("recover");

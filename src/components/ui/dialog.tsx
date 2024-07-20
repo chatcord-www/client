@@ -6,15 +6,15 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Modal = DialogPrimitive.Root;
+const Dialog = DialogPrimitive.Root;
 
-const ModalTrigger = DialogPrimitive.Trigger;
+const DialogTrigger = DialogPrimitive.Trigger;
 
-const ModalPortal = DialogPrimitive.Portal;
+const DialogPortal = DialogPrimitive.Portal;
 
-const ModalClose = DialogPrimitive.Close;
+const DialogClose = DialogPrimitive.Close;
 
-const ModalOverlay = React.forwardRef<
+const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
@@ -27,14 +27,14 @@ const ModalOverlay = React.forwardRef<
     {...props}
   />
 ));
-ModalOverlay.displayName = DialogPrimitive.Overlay.displayName;
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-const ModalContent = React.forwardRef<
+const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <ModalPortal>
-    <ModalOverlay />
+  <DialogPortal>
+    <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
@@ -49,11 +49,11 @@ const ModalContent = React.forwardRef<
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
-  </ModalPortal>
+  </DialogPortal>
 ));
-ModalContent.displayName = DialogPrimitive.Content.displayName;
+DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-const ModalHeader = ({
+const DialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -65,9 +65,9 @@ const ModalHeader = ({
     {...props}
   />
 );
-ModalHeader.displayName = "DialogHeader";
+DialogHeader.displayName = "DialogHeader";
 
-const ModalFooter = ({
+const DialogFooter = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -79,9 +79,9 @@ const ModalFooter = ({
     {...props}
   />
 );
-ModalFooter.displayName = "DialogFooter";
+DialogFooter.displayName = "DialogFooter";
 
-const ModalTitle = React.forwardRef<
+const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
@@ -94,9 +94,9 @@ const ModalTitle = React.forwardRef<
     {...props}
   />
 ));
-ModalTitle.displayName = DialogPrimitive.Title.displayName;
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
-const ModalDescription = React.forwardRef<
+const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
@@ -106,17 +106,17 @@ const ModalDescription = React.forwardRef<
     {...props}
   />
 ));
-ModalDescription.displayName = DialogPrimitive.Description.displayName;
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
-  Modal,
-  ModalClose,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  ModalPortal,
-  ModalTitle,
-  ModalTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 };

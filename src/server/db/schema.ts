@@ -1,15 +1,16 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
+  json,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   text,
   timestamp,
-  varchar,
   uniqueIndex,
-  pgEnum,
-  json,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -51,6 +52,44 @@ export const users = createTable(
     ),
   }),
 );
+
+export const servers = createTable("server", {
+  id: varchar("id", { length: 255 }).notNull().primaryKey(),
+  name: varchar("name", { length: 255 }),
+  icon: varchar("icon", { length: 255 }),
+  public: boolean("public").default(false),
+  ownerId: varchar("ownerId")
+    .notNull()
+    .references(() => users.id),
+});
+
+export const usersToServers = createTable("users_to_servers", {
+  userId: varchar("userId", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  serverId: varchar("serverId", { length: 255 })
+    .notNull()
+    .references(() => servers.id),
+});
+
+export const usersToServersRelations = relations(usersToServers, ({ one }) => ({
+  user: one(users, {
+    fields: [usersToServers.userId],
+    references: [users.id],
+  }),
+  server: one(servers, {
+    fields: [usersToServers.serverId],
+    references: [servers.id],
+  }),
+}));
+
+export const serversRelations = relations(servers, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [servers.ownerId],
+    references: [users.id],
+  }),
+  members: many(usersToServers),
+}));
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),

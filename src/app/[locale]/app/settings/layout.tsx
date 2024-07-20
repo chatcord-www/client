@@ -2,7 +2,6 @@ import DiscordSignOutButton from "@/components/pages/main/sign-out";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Link } from "@/navigation";
-import { headers } from "next/headers";
 import { PropsWithChildren } from "react";
 
 const routes = [

@@ -18,7 +18,7 @@ export const Profile = ({ user }: Session) => {
         />
       </div>
       <div className="px-3 py-1">
-        <h3 className="text-lg font-semibold">{user.name}</h3>
+        <h3 className="text-lg font-semibold truncate">{user.name}</h3>
         {user.aboutMe && (
           <>
             <Separator className="mt-2" />

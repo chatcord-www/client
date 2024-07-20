@@ -1,5 +1,4 @@
 import { LoginForm } from "@/components/pages/login/form";
-import { Button } from "@/components/ui/button";
 import { Link } from "@/navigation";
 import { getTranslations } from "next-intl/server";
 
