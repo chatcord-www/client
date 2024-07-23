@@ -19,11 +19,11 @@ export const ServerIcon = ({ id, icon, name }: ServerIconProps) => {
   const pathname = usePathname();
 
   const isSelected = useMemo(() => {
-    return pathname.includes(`/app/channels/${id}`);
+    return pathname.includes(`/app/servers/${id}`);
   }, [pathname]);
 
   return (
-    <Link href={`/app/channels/${id}`}>
+    <Link href={`/app/servers/${id}`}>
       <Tooltip>
         <TooltipContent side="right">{name}</TooltipContent>
         <TooltipTrigger asChild>
