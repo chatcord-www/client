@@ -7,8 +7,8 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 export const CategoryModal = () => {
   return (
     <DialogContent>
-      <DialogHeader className="mb-3">
-        <DialogTitle>Create Category</DialogTitle>
+      <DialogHeader>
+        <DialogTitle className="font-semibold">Create Category</DialogTitle>
       </DialogHeader>
       <div>
         <Label className="text-xs uppercase">Category name</Label>

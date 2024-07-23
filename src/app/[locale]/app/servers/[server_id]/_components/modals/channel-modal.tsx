@@ -12,7 +12,7 @@ import { Hash, Volume2 } from "lucide-react";
 export const ChannelModal = () => {
   return (
     <DialogContent>
-      <DialogHeader className="mb-3">
+      <DialogHeader>
         <DialogTitle>Create Channel</DialogTitle>
       </DialogHeader>
       <div>
