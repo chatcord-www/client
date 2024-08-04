@@ -15,14 +15,17 @@ export const ServerCategory = ({
   children,
   name,
   serverId,
-  categoryId
+  categoryId,
 }: React.PropsWithChildren<ServerCategoryProps>) => {
-  console.log({serverId, categoryId});
-  
   return (
     <Accordion type="multiple">
-      <AccordionItem value={categoryId} className="border-none" defaultChecked={true}>
+      <AccordionItem
+        value={categoryId}
+        className="border-none"
+        defaultChecked={true}
+      >
         <AccordionTrigger
+          isAdmin={true}
           className="text-xs py-2 px-2 text-zinc-400 uppercase"
           settings={{ categoryId, serverId }}
         >

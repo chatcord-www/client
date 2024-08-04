@@ -8,13 +8,15 @@ import {
 import { Folder, Hash } from "lucide-react";
 import { useState } from "react";
 import { ServerCategory } from "./category";
-import { ServerChannel } from "./channel";
-import { ChannelModal } from "./modals/channel-modal";
-import { SidebarHeader, type SidebarHeaderProps } from "./sidebar-header";
 import { Modals } from "./modals";
+import { SidebarHeader, type SidebarHeaderProps } from "./sidebar-header";
+import { useTranslations } from "next-intl";
 
 export const Sidebar = (props: SidebarHeaderProps) => {
   const [modal, setModal] = useState<"category" | "channel">("channel");
+  const [open, setOpen] = useState(false);
+  const [currentCategoryId, setCurrentCategoryId] = useState("");
+  const t = useTranslations('modals') 
 
   return (
     <ContextMenu>
@@ -22,48 +24,39 @@ export const Sidebar = (props: SidebarHeaderProps) => {
         <div className="h-[calc(100vh-20px)] w-60">
           <SidebarHeader {...props} />
           <div className="mt-3">
-            <ServerCategory
-              categoryId="asd"
-              name="important"
-              serverId={props.serverId}
-            >
-              <ServerChannel
-                channelId=""
-                name="channeli"
-                currentChannel="sd"
+            {props.categories.map((category) => (
+              <ServerCategory
+                key={category.id}
+                name={category.name as string}
                 serverId={props.serverId}
-              />
-              <ServerChannel
-                channelId=""
-                name="channeli-2"
-                currentChannel="sd"
-                serverId={props.serverId}
-              />
-              <ServerChannel
-                channelId=""
-                name="channeli-3"
-                currentChannel="sd"
-                serverId={props.serverId}
-              />
-            </ServerCategory>
+                categoryId={category.id}
+              ></ServerCategory>
+            ))}
           </div>
         </div>
       </ContextMenuTrigger>
-      <Modals serverId={props.serverId} modal={modal}>
+      <Modals
+        onCategorySelect={setCurrentCategoryId}
+        categoryId={currentCategoryId}
+        modal={modal}
+        open={open}
+        setOpen={setOpen}
+        serverId={props.serverId}
+      >
         <ContextMenuContent>
           <ContextMenuItem
             className="flex items-center gap-2"
             onClick={() => setModal("channel")}
           >
             <Hash size={16} className="text-zinc-400" />
-            <span className="text-xs">Create Channel</span>
+            <span className="text-xs">{t('channel.title')}</span>
           </ContextMenuItem>
           <ContextMenuItem
             className="flex items-center gap-2"
             onClick={() => setModal("category")}
           >
             <Folder size={16} className="text-zinc-400" />
-            <span className="text-xs">Create Category</span>
+            <span className="text-xs">{t('category.title')}</span>
           </ContextMenuItem>
         </ContextMenuContent>
       </Modals>

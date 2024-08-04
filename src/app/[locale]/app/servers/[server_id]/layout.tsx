@@ -12,6 +12,9 @@ export default async function ChannelsLayout({
 }: React.PropsWithChildren<Props>) {
   const server = await db.query.servers.findFirst({
     where: eq(servers.id, params.server_id),
+    with: {
+      categories: true,
+    },
   });
 
   if (!server) {
@@ -20,7 +23,11 @@ export default async function ChannelsLayout({
 
   return (
     <main className="flex items-center">
-      <Sidebar name={server.name as string} serverId={server.id} />
+      <Sidebar
+        name={server.name as string}
+        serverId={server.id}
+        categories={server.categories}
+      />
       {children}
     </main>
   );

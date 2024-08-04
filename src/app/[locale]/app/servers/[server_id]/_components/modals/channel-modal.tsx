@@ -8,62 +8,79 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Hash, Volume2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+// import { createChannel } from "./actions";
 
-export const ChannelModal = () => {
+type ChannelModalProps = {
+  serverId: string;
+  categoryId: string;
+  onCategorySelect?: (id: string) => void;
+};
+
+export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
+  const t = useTranslations("modals.channel");
+
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Create Channel</DialogTitle>
+        <DialogTitle>{t("title")}</DialogTitle>
       </DialogHeader>
-      <div>
-        <Label className="text-xs uppercase">Channel Type</Label>
-        <RadioGroup defaultValue="text" className="">
-          <div>
-            <RadioGroupItem
-              value="text"
-              id="text"
-              className="peer sr-only w-full"
-            />
-            <Label
-              htmlFor="text"
-              className="flex flex-col w-full rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-            >
-              <div className="flex items-center gap-2 text-white">
-                <Hash size={20} />
-                <span>Text</span>
-              </div>
-              <p className="font-normal text-xs text-zinc-300">
-                Send messages, GIFs, emojis
-              </p>
-            </Label>
-          </div>
-          <div>
-            <RadioGroupItem
-              value="voice"
-              id="voice"
-              className="peer sr-only w-full"
-            />
-            <Label
-              htmlFor="voice"
-              className="flex flex-col w-full rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-            >
-              <div className="flex items-center gap-2 text-white">
-                <Volume2 size={20} />
-                <span>Voice</span>
-              </div>
-              <p className="text-xs font-normal text-zinc-300">
-                Hang out together with voice, video and screen share
-              </p>
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
-      <div>
-        <Label className="text-xs uppercase">Channel Name</Label>
-        <Input placeholder="new-channel" />
-      </div>
+      <form
+        action={async (e) => {
+          // eslint-disable-next-line
+          // await createChannel(e, serverId, categoryId);
+        }}
+      >
+        <div>
+          <Label className="text-xs uppercase">{t("type")}</Label>
+          <RadioGroup defaultValue="text" className="">
+            <div>
+              <RadioGroupItem
+                value="text"
+                id="text"
+                className="peer sr-only w-full"
+              />
+              <Label
+                htmlFor="text"
+                className="flex flex-col w-full rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              >
+                <div className="flex items-center gap-2 text-white">
+                  <Hash size={20} />
+                  <span>{t("text")}</span>
+                </div>
+                <p className="font-normal text-xs text-zinc-300">
+                  {t("text-description")}
+                </p>
+              </Label>
+            </div>
+            <div>
+              <RadioGroupItem
+                value="voice"
+                id="voice"
+                className="peer sr-only w-full"
+              />
+              <Label
+                htmlFor="voice"
+                className="flex flex-col w-full rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              >
+                <div className="flex items-center gap-2 text-white">
+                  <Volume2 size={20} />
+                  <span>{t("voice")}</span>
+                </div>
+                <p className="text-xs font-normal text-zinc-300">
+                {t("voice-description")}
+                </p>
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+        <div>
+          <Label className="text-xs uppercase">{t("label")}</Label>
+          <Input placeholder="new-channel" />
+        </div>
 
-      <Button>Create</Button>
+        <Button className="w-full mt-3">{t("button")}</Button>
+      </form>
     </DialogContent>
   );
 };

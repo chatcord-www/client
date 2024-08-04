@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@/navigation";
 import { Hash, Settings } from "lucide-react";
+import { Metadata } from "next";
 
 type ServerChannelProps = {
   name: string;
@@ -9,11 +10,18 @@ type ServerChannelProps = {
   currentChannel: string;
 };
 
+const generateMetadata = (): Metadata => {
+  return {
+    title: 'channel'
+  }
+}
+
 export const ServerChannel = ({
   channelId,
   serverId,
   name,
 }: ServerChannelProps) => {
+
   return (
     <Button
       variant={"ghost"}

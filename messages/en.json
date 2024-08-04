@@ -19,6 +19,23 @@
       "min-3": "Server name must include at least 3 characters"
     }
   },
+  "modals": {
+    "channel": {
+      "title": "Create channel",
+      "type": "Channel type",
+      "text": "Text",
+      "voice": "Voice",
+      "voice-description": "Hang out together with voice, video and screen share",
+      "text-description": "Send messages, GIFs, emojis",
+      "label": "Channel name",
+      "button": "Create"
+    },
+    "category": {
+      "title": "Create category",
+      "label": "Category name",
+      "button": "Create"
+    }
+  },
   "status": {
     "online": "Online",
     "dnd": "Do not disturb",

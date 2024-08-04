@@ -63,6 +63,46 @@ export const servers = createTable("server", {
     .references(() => users.id),
 });
 
+export const categories = createTable("category", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 255 }),
+  serverId: varchar("serverId", { length: 255 }).references(() => servers.id),
+});
+
+export const channels = createTable("channel", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 255 }),
+  categoryId: varchar("category_id", { length: 255 }).references(
+    () => categories.id,
+  ),
+  serverId: varchar("serverId", { length: 255 }).references(() => servers.id),
+});
+
+export const categoriesRelations = relations(categories, ({ many, one }) => ({
+  channels: many(channels),
+  server: one(servers, {
+    fields: [categories.serverId],
+    references: [servers.id],
+  }),
+}));
+
+export const channelsRelations = relations(channels, ({ one }) => ({
+  category: one(categories, {
+    fields: [channels.categoryId],
+    references: [categories.id],
+  }),
+  server: one(servers, {
+    fields: [channels.serverId],
+    references: [servers.id],
+  }),
+}));
+
 export const usersToServers = createTable("users_to_servers", {
   userId: varchar("userId", { length: 255 })
     .notNull()
@@ -72,16 +112,19 @@ export const usersToServers = createTable("users_to_servers", {
     .references(() => servers.id),
 });
 
-export const usersToServersRelations = relations(usersToServers, ({ one }) => ({
-  user: one(users, {
-    fields: [usersToServers.userId],
-    references: [users.id],
+export const usersToServersRelations = relations(
+  usersToServers,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [usersToServers.userId],
+      references: [users.id],
+    }),
+    server: one(servers, {
+      fields: [usersToServers.serverId],
+      references: [servers.id],
+    }),
   }),
-  server: one(servers, {
-    fields: [usersToServers.serverId],
-    references: [servers.id],
-  }),
-}));
+);
 
 export const serversRelations = relations(servers, ({ one, many }) => ({
   owner: one(users, {
@@ -89,6 +132,7 @@ export const serversRelations = relations(servers, ({ one, many }) => ({
     references: [users.id],
   }),
   members: many(usersToServers),
+  categories: many(categories),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({

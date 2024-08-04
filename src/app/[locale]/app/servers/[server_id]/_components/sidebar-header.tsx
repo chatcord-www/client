@@ -4,6 +4,11 @@ import { ChevronDown } from "lucide-react";
 export type SidebarHeaderProps = {
   name: string;
   serverId: string;
+  categories: {
+    id: string;
+    serverId: string | null;
+    name: string | null;
+  }[];
 };
 
 export const SidebarHeader = ({ name }: SidebarHeaderProps) => {

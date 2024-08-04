@@ -8,6 +8,20 @@
       "when": 1721434372068,
       "tag": "0000_nifty_miss_america",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1722793588692,
+      "tag": "0001_young_selene",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1722793997362,
+      "tag": "0002_wooden_the_hunter",
+      "breakpoints": true
     }
   ]
 }

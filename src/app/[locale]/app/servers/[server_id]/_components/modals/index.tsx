@@ -3,19 +3,31 @@ import { CategoryModal } from "./category-modal";
 import { ChannelModal } from "./channel-modal";
 
 type ChannelModalProps = {
-  serverId: string;
   modal: "category" | "channel";
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  serverId: string;
+  categoryId: string;
+  onCategorySelect: (id: string) => void;
 };
 
 export const Modals = ({
   children,
   modal,
+  open,
+  serverId,
+  setOpen,
+  categoryId,
 }: React.PropsWithChildren<ChannelModalProps>) => {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>
-      {modal === "category" && <CategoryModal />}
-      {modal === "channel" && <ChannelModal />}
+      {modal === "category" && (
+        <CategoryModal setOpen={setOpen} serverId={serverId} />
+      )}
+      {modal === "channel" && (
+        <ChannelModal serverId={serverId} categoryId={categoryId} />
+      )}
     </Dialog>
   );
 };
