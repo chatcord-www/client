@@ -12,9 +12,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCategoryChannels } from "@/hooks/category-channels";
 import { Hash, Loader2, Volume2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { ChannelType } from "../sidebar-header";
 import { createChannel } from "./actions";
+import { useFormStatus } from "react-dom";
 
 type ChannelModalProps = {
   serverId: string;
@@ -23,7 +24,7 @@ type ChannelModalProps = {
 };
 
 export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
-  const [loading, setLoading] = useState(false);
+  const { pending } = useFormStatus();
   const { addChannelInCategory, addChannelWithoutCategory } =
     useCategoryChannels();
   const t = useTranslations("modals.channel");
@@ -36,11 +37,9 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
       </DialogHeader>
       <form
         action={async (e) => {
-          setLoading(true);
           const response = await createChannel(e, serverId, categoryId);
 
           if (response.success) {
-            setLoading(false);
             if (response.categoryId) {
               addChannelInCategory(
                 response.channelInfo as ChannelType,
@@ -101,8 +100,8 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
           <Label className="text-xs uppercase">{t("label")}</Label>
           <Input placeholder="new-channel" name="name" required />
         </div>
-        <Button className="w-full mt-3" type="submit" disabled={loading}>
-          {loading ? <Loader2 className="animate-spin size-5" /> : t("button")}
+        <Button className="w-full mt-3" type="submit" disabled={pending}>
+          {pending ? <Loader2 className="animate-spin size-5" /> : t("button")}
         </Button>
       </form>
       <DialogClose ref={closeModalRef} className="hidden" />
