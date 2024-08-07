@@ -21,7 +21,7 @@ export const activityEnum = pgEnum("activity", [
   "DND",
   "OFFLINE",
 ]);
-export const channelType = pgEnum("channel", ["VOICE", "TEXT"])
+export const channelType = pgEnum("type", ["VOICE", "TEXT"])
 
 export const users = createTable(
   "user",
