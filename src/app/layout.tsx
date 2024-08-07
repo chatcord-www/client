@@ -26,8 +26,8 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${GeistSans.variable}`}>
       <body>
+        <Pogressbar />
         <SessionProvider>
-          <Pogressbar />
           <ThemeProvider>
             <NextIntlClientProvider messages={messages}>
               <TRPCReactProvider>{children}</TRPCReactProvider>
