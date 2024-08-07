@@ -22,9 +22,7 @@ export const Modals = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{children}</DialogTrigger>
-      {modal === "category" && (
-        <CategoryModal setOpen={setOpen} serverId={serverId} />
-      )}
+      {modal === "category" && <CategoryModal serverId={serverId} />}
       {modal === "channel" && (
         <ChannelModal serverId={serverId} categoryId={categoryId} />
       )}

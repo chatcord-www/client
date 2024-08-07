@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ServerType, useServers } from "@/hooks/servers";
 import { instance } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info, Loader2 } from "lucide-react";
@@ -40,6 +41,7 @@ const CreateServerSchema: ZodType<CreateServerFormType> = z.object({
 });
 
 export const CreateServerDialog = () => {
+  const { addNewServer } = useServers();
   const t = useTranslations("create-server");
   const [file, setFile] = useState<File>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -68,6 +70,8 @@ export const CreateServerDialog = () => {
       setOpenDialog(false);
       setFile(undefined);
       reset();
+      // eslint-disable-next-line
+      addNewServer(response.data.serverInfo);
     }
   };
 
@@ -123,7 +127,7 @@ export const CreateServerDialog = () => {
               />
             </div>
           </div>
-          <Button className="mt-3 w-full">
+          <Button className="mt-3 w-full" disabled={loading}>
             {loading ? <Loader2 className="animate-spin" /> : t("create")}
           </Button>
         </form>

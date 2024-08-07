@@ -9,18 +9,25 @@ import { Link } from "@/navigation";
 import { Folder, Hash } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ServerCategory } from "./category";
 import { ServerChannel } from "./channel";
 import { Modals } from "./modals";
 import { SidebarHeader, type SidebarHeaderProps } from "./sidebar-header";
+import { useCategoryChannels } from "@/hooks/category-channels";
 
 export const Sidebar = (props: SidebarHeaderProps) => {
   const [modal, setModal] = useState<"category" | "channel">("channel");
+  const {loadCategories, loadChannelsWithoutCategory, categories, channelsWithoutCategory} = useCategoryChannels()
   const [open, setOpen] = useState(false);
   const [currentCategoryId, setCurrentCategoryId] = useState("");
   const t = useTranslations("modals");
   const params = useParams();
+
+  useEffect(() => {
+    loadCategories(props.categories)
+    loadChannelsWithoutCategory(props.channelsWithoutCategory)
+  }, [props.categories, props.channelsWithoutCategory])
 
   return (
     <ContextMenu>
@@ -28,7 +35,7 @@ export const Sidebar = (props: SidebarHeaderProps) => {
         <div className="h-[calc(100vh-20px)] w-60 mr-2">
           <SidebarHeader {...props} />
           <div className="mt-3">
-            {props.categories.map((category) => (
+            {categories.map((category) => (
               <ServerCategory
                 key={category.id}
                 name={category.name as string}
@@ -49,7 +56,7 @@ export const Sidebar = (props: SidebarHeaderProps) => {
                 ))}
               </ServerCategory>
             ))}
-            {props.channelsWithoutCategory.map((channel) => (
+            {channelsWithoutCategory.map((channel) => (
               <Link
                 href={`/app/servers/${props.serverId}/${channel.id}`}
                 key={channel.id}

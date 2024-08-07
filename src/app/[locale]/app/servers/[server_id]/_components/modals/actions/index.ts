@@ -19,13 +19,17 @@ export const createCategory = async (e: FormData, serverId: string) => {
       message: "You are not owner",
     };
 
-  await db.insert(categories).values({
-    name,
-    serverId,
-  });
+  const newCategory = await db
+    .insert(categories)
+    .values({
+      name,
+      serverId,
+    })
+    .returning();
 
   return {
     success: true,
+    categoryInfo: newCategory[0],
   };
 };
 
@@ -38,15 +42,20 @@ export const createChannel = async (
     const name = e.get("name") as string;
     const type = e.get("type") as "TEXT" | "VOICE";
 
-    await db.insert(channels).values({
-      categoryId: categoryId || null,
-      serverId,
-      name,
-      type,
-    });
+    const newChannel = await db
+      .insert(channels)
+      .values({
+        categoryId: categoryId || null,
+        serverId,
+        name,
+        type,
+      })
+      .returning();
 
     return {
       success: true,
+      channelInfo: newChannel[0],
+      categoryId: categoryId || null,
     };
   } catch (err) {
     return {

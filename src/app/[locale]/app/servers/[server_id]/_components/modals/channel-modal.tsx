@@ -9,9 +9,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCategoryChannels } from "@/hooks/category-channels";
 import { Hash, Loader2, Volume2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import { ChannelType } from "../sidebar-header";
 import { createChannel } from "./actions";
 
 type ChannelModalProps = {
@@ -22,6 +24,8 @@ type ChannelModalProps = {
 
 export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
   const [loading, setLoading] = useState(false);
+  const { addChannelInCategory, addChannelWithoutCategory } =
+    useCategoryChannels();
   const t = useTranslations("modals.channel");
   const closeModalRef = useRef<HTMLButtonElement>(null);
 
@@ -37,6 +41,14 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
 
           if (response.success) {
             setLoading(false);
+            if (response.categoryId) {
+              addChannelInCategory(
+                response.channelInfo as ChannelType,
+                categoryId,
+              );
+            } else {
+              addChannelWithoutCategory(response.channelInfo as ChannelType);
+            }
             closeModalRef.current?.click();
           }
         }}
