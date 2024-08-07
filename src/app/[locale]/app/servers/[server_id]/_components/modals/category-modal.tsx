@@ -10,8 +10,9 @@ import { Label } from "@/components/ui/label";
 import { useCategoryChannels } from "@/hooks/category-channels";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useTranslations } from "next-intl";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { createCategory } from "./actions";
+import { Loader2 } from "lucide-react";
 
 type CategoryModalProps = {
   serverId: string;
@@ -20,6 +21,7 @@ type CategoryModalProps = {
 export const CategoryModal = ({ serverId }: CategoryModalProps) => {
   const t = useTranslations("modals.category");
   const closeModalRef = useRef<HTMLButtonElement>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const { addCategory } = useCategoryChannels();
 
   return (
@@ -30,8 +32,10 @@ export const CategoryModal = ({ serverId }: CategoryModalProps) => {
       <form
         action={async (e) => {
           const response = await createCategory(e, serverId);
+          setLoading(true);
 
           if (response.success) {
+            setLoading(false);
             addCategory({
               serverId,
               channels: [],
@@ -44,7 +48,9 @@ export const CategoryModal = ({ serverId }: CategoryModalProps) => {
       >
         <Label className="text-xs uppercase">{t("label")}</Label>
         <Input placeholder="New Category" name="name" />
-        <Button className="w-full mt-3">{t("button")}</Button>
+        <Button className="w-full mt-3" disabled={loading}>
+          {loading ? <Loader2 className="animate-spin" /> : t("button")}
+        </Button>
       </form>
       <DialogClose ref={closeModalRef} className="hidden" />
     </DialogContent>
