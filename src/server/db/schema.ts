@@ -21,6 +21,7 @@ export const activityEnum = pgEnum("activity", [
   "DND",
   "OFFLINE",
 ]);
+export const channelType = pgEnum("channel", ["VOICE", "TEXT"])
 
 export const users = createTable(
   "user",
@@ -82,6 +83,7 @@ export const channels = createTable("channel", {
     () => categories.id,
   ),
   serverId: varchar("serverId", { length: 255 }).references(() => servers.id),
+  type: channelType("type").default("TEXT"),
 });
 
 export const categoriesRelations = relations(categories, ({ many, one }) => ({
@@ -112,19 +114,16 @@ export const usersToServers = createTable("users_to_servers", {
     .references(() => servers.id),
 });
 
-export const usersToServersRelations = relations(
-  usersToServers,
-  ({ one, many }) => ({
-    user: one(users, {
-      fields: [usersToServers.userId],
-      references: [users.id],
-    }),
-    server: one(servers, {
-      fields: [usersToServers.serverId],
-      references: [servers.id],
-    }),
+export const usersToServersRelations = relations(usersToServers, ({ one }) => ({
+  user: one(users, {
+    fields: [usersToServers.userId],
+    references: [users.id],
   }),
-);
+  server: one(servers, {
+    fields: [usersToServers.serverId],
+    references: [servers.id],
+  }),
+}));
 
 export const serversRelations = relations(servers, ({ one, many }) => ({
   owner: one(users, {

@@ -2,7 +2,7 @@
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { categories, servers } from "@/server/db/schema";
+import { categories, channels, servers } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const createCategory = async (e: FormData, serverId: string) => {
@@ -29,8 +29,28 @@ export const createCategory = async (e: FormData, serverId: string) => {
   };
 };
 
-// export const createChannel = async (
-//   e: FormData,
-//   serverId: string,
-//   categoryId?: string,
-// ) => {};
+export const createChannel = async (
+  e: FormData,
+  serverId: string,
+  categoryId?: string,
+) => {
+  try {
+    const name = e.get("name") as string;
+    const type = e.get("type") as "TEXT" | "VOICE";
+
+    await db.insert(channels).values({
+      categoryId: categoryId || null,
+      serverId,
+      name,
+      type,
+    });
+
+    return {
+      success: true,
+    };
+  } catch (err) {
+    return {
+      success: false,
+    };
+  }
+};

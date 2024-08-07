@@ -19,6 +19,11 @@
       "min-3": "Server name must include at least 3 characters"
     }
   },
+  "channel": {
+    "welcome": "Welcome to #{channel}",
+    "description": "This is the start of #{channel} channel",
+    "textarea-placeholder": "Message #{channel}"
+  },
   "modals": {
     "channel": {
       "title": "Create channel",

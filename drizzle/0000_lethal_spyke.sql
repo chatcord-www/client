@@ -19,6 +19,20 @@ CREATE TABLE IF NOT EXISTS "client_account" (
 	CONSTRAINT "client_account_provider_providerAccountId_pk" PRIMARY KEY("provider","providerAccountId")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "client_category" (
+	"id" varchar(255) PRIMARY KEY NOT NULL,
+	"name" varchar(255),
+	"serverId" varchar(255)
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "client_channel" (
+	"id" varchar(255) PRIMARY KEY NOT NULL,
+	"name" varchar(255),
+	"category_id" varchar(255),
+	"serverId" varchar(255),
+	"type" "type" DEFAULT 'TEXT'
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "client_server" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"name" varchar(255),
@@ -60,6 +74,24 @@ CREATE TABLE IF NOT EXISTS "client_verificationToken" (
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "client_account" ADD CONSTRAINT "client_account_userId_client_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."client_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "client_category" ADD CONSTRAINT "client_category_serverId_client_server_id_fk" FOREIGN KEY ("serverId") REFERENCES "public"."client_server"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "client_channel" ADD CONSTRAINT "client_channel_category_id_client_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."client_category"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "client_channel" ADD CONSTRAINT "client_channel_serverId_client_server_id_fk" FOREIGN KEY ("serverId") REFERENCES "public"."client_server"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

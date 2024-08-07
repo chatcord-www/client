@@ -1,5 +1,5 @@
 {
-  "id": "a8c30e7b-1d5b-42cd-b33e-e5bc396c2241",
+  "id": "e1bcc3b9-dc0d-404a-971b-adce052f45fb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -108,6 +108,117 @@
           ]
         }
       },
+      "uniqueConstraints": {}
+    },
+    "public.client_category": {
+      "name": "client_category",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serverId": {
+          "name": "serverId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_category_serverId_client_server_id_fk": {
+          "name": "client_category_serverId_client_server_id_fk",
+          "tableFrom": "client_category",
+          "tableTo": "client_server",
+          "columnsFrom": [
+            "serverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.client_channel": {
+      "name": "client_channel",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serverId": {
+          "name": "serverId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'TEXT'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_channel_category_id_client_category_id_fk": {
+          "name": "client_channel_category_id_client_category_id_fk",
+          "tableFrom": "client_channel",
+          "tableTo": "client_category",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "client_channel_serverId_client_server_id_fk": {
+          "name": "client_channel_serverId_client_server_id_fk",
+          "tableFrom": "client_channel",
+          "tableTo": "client_server",
+          "columnsFrom": [
+            "serverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.client_server": {

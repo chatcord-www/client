@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 
+export type ChannelType = {
+  serverId: string | null;
+  categoryId: string | null;
+  id: string;
+  name: string | null;
+  type: "TEXT" | "VOICE" | null;
+};
+
 export type SidebarHeaderProps = {
   name: string;
   serverId: string;
@@ -8,7 +16,9 @@ export type SidebarHeaderProps = {
     id: string;
     serverId: string | null;
     name: string | null;
+    channels: ChannelType[];
   }[];
+  channelsWithoutCategory: ChannelType[];
 };
 
 export const SidebarHeader = ({ name }: SidebarHeaderProps) => {

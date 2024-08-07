@@ -1,5 +1,7 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -7,9 +9,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Hash, Volume2 } from "lucide-react";
+import { Hash, Loader2, Volume2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-// import { createChannel } from "./actions";
+import { useRef, useState } from "react";
+import { createChannel } from "./actions";
 
 type ChannelModalProps = {
   serverId: string;
@@ -18,7 +21,9 @@ type ChannelModalProps = {
 };
 
 export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
+  const [loading, setLoading] = useState(false);
   const t = useTranslations("modals.channel");
+  const closeModalRef = useRef<HTMLButtonElement>(null);
 
   return (
     <DialogContent>
@@ -27,16 +32,22 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
       </DialogHeader>
       <form
         action={async (e) => {
-          // eslint-disable-next-line
-          // await createChannel(e, serverId, categoryId);
+          setLoading(true);
+          const response = await createChannel(e, serverId, categoryId);
+
+          if (response.success) {
+            setLoading(false);
+            closeModalRef.current?.click();
+          }
         }}
       >
         <div>
           <Label className="text-xs uppercase">{t("type")}</Label>
-          <RadioGroup defaultValue="text" className="">
+          <RadioGroup defaultValue="TEXT" name="type" required>
             <div>
               <RadioGroupItem
-                value="text"
+                defaultChecked
+                value="TEXT"
                 id="text"
                 className="peer sr-only w-full"
               />
@@ -55,7 +66,7 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
             </div>
             <div>
               <RadioGroupItem
-                value="voice"
+                value="VOICE"
                 id="voice"
                 className="peer sr-only w-full"
               />
@@ -68,7 +79,7 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
                   <span>{t("voice")}</span>
                 </div>
                 <p className="text-xs font-normal text-zinc-300">
-                {t("voice-description")}
+                  {t("voice-description")}
                 </p>
               </Label>
             </div>
@@ -76,11 +87,13 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
         </div>
         <div>
           <Label className="text-xs uppercase">{t("label")}</Label>
-          <Input placeholder="new-channel" />
+          <Input placeholder="new-channel" name="name" required />
         </div>
-
-        <Button className="w-full mt-3">{t("button")}</Button>
+        <Button className="w-full mt-3" type="submit" disabled={loading}>
+          {loading ? <Loader2 className="animate-spin size-5" /> : t("button")}
+        </Button>
       </form>
+      <DialogClose ref={closeModalRef} className="hidden" />
     </DialogContent>
   );
 };

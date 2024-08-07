@@ -18,7 +18,7 @@ export const ServerCategory = ({
   categoryId,
 }: React.PropsWithChildren<ServerCategoryProps>) => {
   return (
-    <Accordion type="multiple">
+    <Accordion type="multiple" defaultValue={[categoryId]}>
       <AccordionItem
         value={categoryId}
         className="border-none"
@@ -31,7 +31,7 @@ export const ServerCategory = ({
         >
           {name}
         </AccordionTrigger>
-        <AccordionContent className="pb-1">{children}</AccordionContent>
+        <AccordionContent className="pb-1 pl-1">{children}</AccordionContent>
       </AccordionItem>
     </Accordion>
   );

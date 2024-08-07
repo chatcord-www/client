@@ -24,6 +24,11 @@
       "min-3": "სერვერის სახელი უნდა შეიცავდეს მინიმუმ 3 ასოს"
     }
   },
+  "channel": {
+    "welcome": "მოგესალმები #{channel}-ში",
+    "description": "ეს #{channel} არხის დასაწყისია",
+    "textarea-placeholder": "გააგზავნე #{channel}-ში"
+  },
   "modals": {
     "channel": {
       "title": "შექმენი არხი",

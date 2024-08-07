@@ -1,6 +1,6 @@
 {
-  "id": "f5f17af7-e3e6-4f72-a9fc-3da48d4fa40d",
-  "prevId": "a8c30e7b-1d5b-42cd-b33e-e5bc396c2241",
+  "id": "c7aa7d20-b381-4fa7-9245-69c1d3f1fcbe",
+  "prevId": "e1bcc3b9-dc0d-404a-971b-adce052f45fb",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -125,10 +125,30 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "serverId": {
+          "name": "serverId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "client_category_serverId_client_server_id_fk": {
+          "name": "client_category_serverId_client_server_id_fk",
+          "tableFrom": "client_category",
+          "tableTo": "client_server",
+          "columnsFrom": [
+            "serverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -152,7 +172,22 @@
           "name": "category_id",
           "type": "varchar(255)",
           "primaryKey": false,
+          "notNull": false,
+          "default": "'NULL'"
+        },
+        "serverId": {
+          "name": "serverId",
+          "type": "varchar(255)",
+          "primaryKey": false,
           "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'TEXT'"
         }
       },
       "indexes": {},
@@ -163,6 +198,19 @@
           "tableTo": "client_category",
           "columnsFrom": [
             "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "client_channel_serverId_client_server_id_fk": {
+          "name": "client_channel_serverId_client_server_id_fk",
+          "tableFrom": "client_channel",
+          "tableTo": "client_server",
+          "columnsFrom": [
+            "serverId"
           ],
           "columnsTo": [
             "id"

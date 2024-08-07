@@ -1,6 +1,6 @@
 {
-  "id": "a35724bd-cbf0-45fd-a0e5-92f8d19a2ae8",
-  "prevId": "f5f17af7-e3e6-4f72-a9fc-3da48d4fa40d",
+  "id": "efd5c829-aa1d-4bcf-84c3-6c722bb862c2",
+  "prevId": "c7aa7d20-b381-4fa7-9245-69c1d3f1fcbe",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -172,13 +172,22 @@
           "name": "category_id",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'NULL'"
         },
         "serverId": {
           "name": "serverId",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "channel",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'TEXT'"
         }
       },
       "indexes": {},
@@ -496,6 +505,14 @@
         "IDLE",
         "DND",
         "OFFLINE"
+      ]
+    },
+    "public.channel": {
+      "name": "channel",
+      "schema": "public",
+      "values": [
+        "VOICE",
+        "TEXT"
       ]
     }
   },
