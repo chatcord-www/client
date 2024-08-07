@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1722988155930,
-      "tag": "0000_lethal_spyke",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1722988804914,
-      "tag": "0001_light_ben_parker",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1722988854575,
-      "tag": "0002_little_energizer",
+      "when": 1723053407501,
+      "tag": "0000_warm_marvex",
       "breakpoints": true
     }
   ]

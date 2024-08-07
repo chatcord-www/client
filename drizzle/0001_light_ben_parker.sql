@@ -1,1 +1,0 @@
-ALTER TABLE "client_channel" ALTER COLUMN "category_id" SET DEFAULT 'NULL';

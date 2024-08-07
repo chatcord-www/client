@@ -4,6 +4,12 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."channel_type" AS ENUM('VOICE', 'TEXT');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "client_account" (
 	"userId" varchar(255) NOT NULL,
 	"type" varchar(255) NOT NULL,
@@ -30,7 +36,7 @@ CREATE TABLE IF NOT EXISTS "client_channel" (
 	"name" varchar(255),
 	"category_id" varchar(255),
 	"serverId" varchar(255),
-	"type" "type" DEFAULT 'TEXT'
+	"channel_type" "channel_type" DEFAULT 'TEXT'
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "client_server" (

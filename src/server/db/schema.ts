@@ -21,7 +21,7 @@ export const activityEnum = pgEnum("activity", [
   "DND",
   "OFFLINE",
 ]);
-export const channelType = pgEnum("type", ["VOICE", "TEXT"])
+export const channelType = pgEnum("channel_type", ["VOICE", "TEXT"])
 
 export const users = createTable(
   "user",
@@ -83,7 +83,7 @@ export const channels = createTable("channel", {
     () => categories.id,
   ),
   serverId: varchar("serverId", { length: 255 }).references(() => servers.id),
-  type: channelType("type").default("TEXT"),
+  type: channelType("channel_type").default("TEXT"),
 });
 
 export const categoriesRelations = relations(categories, ({ many, one }) => ({

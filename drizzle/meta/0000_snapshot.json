@@ -1,5 +1,5 @@
 {
-  "id": "e1bcc3b9-dc0d-404a-971b-adce052f45fb",
+  "id": "4514349b-c22e-4c86-b084-0fac656825e4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -180,9 +180,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "type": {
-          "name": "type",
-          "type": "type",
+        "channel_type": {
+          "name": "channel_type",
+          "type": "channel_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
@@ -504,6 +504,14 @@
         "IDLE",
         "DND",
         "OFFLINE"
+      ]
+    },
+    "public.channel_type": {
+      "name": "channel_type",
+      "schema": "public",
+      "values": [
+        "VOICE",
+        "TEXT"
       ]
     }
   },
