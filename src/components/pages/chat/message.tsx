@@ -6,6 +6,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
 } from "@/components/ui/context-menu";
+import { Textarea } from "@/components/ui/textarea";
 import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
 import { format } from "date-fns";
 import {
@@ -17,6 +18,7 @@ import {
   User2,
 } from "lucide-react";
 import type { Session } from "next-auth";
+import { useEffect, useState } from "react";
 
 type MessageProps = {
   id: string;
@@ -37,6 +39,16 @@ export const Message = ({
   userId,
   session,
 }: MessageProps) => {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editedMessage, setEditedMessage] = useState<string>(message);
+
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setIsEditing(false);
+    });
+  });
+  
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -46,14 +58,33 @@ export const Message = ({
               <AvatarFallback>{username[0]}</AvatarFallback>
               <AvatarImage src={avatar} />
             </Avatar>
-            <div className="ml-2">
+            <div className="ml-2 w-full">
               <div className="flex">
                 <div className="text-sm">{username}</div>
                 <time className="text-xs ml-2 text-zinc-400">
                   {format(createdAt, "PP")}
                 </time>
               </div>
-              <div className="text-sm mt-1">{message}</div>
+              {isEditing ? (
+                <div>
+                  <Textarea value={editedMessage} className="w-full" onChange={e => setEditedMessage(e.currentTarget.value)}/>
+                  <div className="text-xs">
+                    escape to{" "}
+                    <span
+                      className="cursor-pointer text-blue-400 hover:underline"
+                      onClick={() => setIsEditing(false)}
+                    >
+                      cancel
+                    </span>{" "}
+                    and enter to{" "}
+                    <span className="cursor-pointer text-blue-400 hover:underline">
+                      save
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm mt-1">{message}</div>
+              )}
             </div>
           </div>
         </div>
@@ -65,14 +96,14 @@ export const Message = ({
             <Reply size={15} />
           </div>
         </ContextMenuItem>
-        {session.user.id === userId && (
-          <ContextMenuItem>
+        {
+          <ContextMenuItem onClick={() => setIsEditing(true)}>
             <div className="flex justify-between items-center w-full gap-3">
               <div className="text-xs">Edit Text</div>
               <Pencil size={15} />
             </div>
           </ContextMenuItem>
-        )}
+        }
         <ContextMenuItem onClick={() => navigator.clipboard.writeText(message)}>
           <div className="flex justify-between items-center w-full gap-3">
             <div className="text-xs">Copy Text</div>
@@ -85,7 +116,7 @@ export const Message = ({
             <User2 size={15} />
           </div>
         </ContextMenuItem>
-        {session.user.id === userId && (
+        {session?.user?.id === userId && (
           <ContextMenuItem danger>
             <div className="flex justify-between items-center w-full gap-3">
               <div className="text-xs">Delete Message</div>
