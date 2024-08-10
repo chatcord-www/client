@@ -10,20 +10,30 @@ import { Label } from "@/components/ui/label";
 import { useCategoryChannels } from "@/hooks/category-channels";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Loader2 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { createCategory } from "./actions";
+import { useTranslations } from "next-intl";
 
 type CategoryModalProps = {
   serverId: string;
 };
 
-export const CategoryModal = ({ serverId }: CategoryModalProps) => {
-  const t = useTranslations("modals.category");
-  const closeModalRef = useRef<HTMLButtonElement>(null);
+const Submit = () => {
   const { pending } = useFormStatus();
+  const t = useTranslations("modals.category");
+
+  return (
+    <Button className="w-full mt-3" disabled={pending}>
+      {pending ? <Loader2 className="animate-spin" /> : t("button")}
+    </Button>
+  );
+};
+
+export const CategoryModal = ({ serverId }: CategoryModalProps) => {
+  const closeModalRef = useRef<HTMLButtonElement>(null);
   const { addCategory } = useCategoryChannels();
+  const t = useTranslations("modals.category");
 
   return (
     <DialogContent>
@@ -47,9 +57,7 @@ export const CategoryModal = ({ serverId }: CategoryModalProps) => {
       >
         <Label className="text-xs uppercase">{t("label")}</Label>
         <Input placeholder="New Category" name="name" />
-        <Button className="w-full mt-3" disabled={pending}>
-          {pending ? <Loader2 className="animate-spin" /> : t("button")}
-        </Button>
+        <Submit />
       </form>
       <DialogClose ref={closeModalRef} className="hidden" />
     </DialogContent>

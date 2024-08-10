@@ -13,9 +13,9 @@ import { useCategoryChannels } from "@/hooks/category-channels";
 import { Hash, Loader2, Volume2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
+import { useFormStatus } from "react-dom";
 import { ChannelType } from "../sidebar-header";
 import { createChannel } from "./actions";
-import { useFormStatus } from "react-dom";
 
 type ChannelModalProps = {
   serverId: string;
@@ -23,8 +23,18 @@ type ChannelModalProps = {
   onCategorySelect?: (id: string) => void;
 };
 
-export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
+const Submit = () => {
   const { pending } = useFormStatus();
+  const t = useTranslations("modals.channel");
+
+  return (
+    <Button className="w-full mt-3" type="submit" disabled={pending}>
+      {pending ? <Loader2 className="animate-spin size-5" /> : t("button")}
+    </Button>
+  );
+};
+
+export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
   const { addChannelInCategory, addChannelWithoutCategory } =
     useCategoryChannels();
   const t = useTranslations("modals.channel");
@@ -100,9 +110,7 @@ export const ChannelModal = ({ serverId, categoryId }: ChannelModalProps) => {
           <Label className="text-xs uppercase">{t("label")}</Label>
           <Input placeholder="new-channel" name="name" required />
         </div>
-        <Button className="w-full mt-3" type="submit" disabled={pending}>
-          {pending ? <Loader2 className="animate-spin size-5" /> : t("button")}
-        </Button>
+        <Submit />
       </form>
       <DialogClose ref={closeModalRef} className="hidden" />
     </DialogContent>

@@ -1,3 +1,4 @@
+import { ChannelContainer } from "@/components/pages/channel/container";
 import { db } from "@/server/db";
 import { format } from "date-fns";
 import { GeistMono } from "geist/font/mono";
@@ -18,15 +19,15 @@ export default async function ChannelPage(props: {
   });
 
   return (
-    <div className="w-full p-4">
-      <div className="bg-card size-12 rounded-full grid place-items-center">
+    <div className="w-full overflow-y-auto">
+      <div className="bg-card size-12 rounded-full grid place-items-center ml-4 mt-4">
         {channelInfo?.type === "TEXT" ? (
           <Hash size={20} strokeWidth={3} className="text-zinc-300" />
         ) : (
           <Volume2 size={20} strokeWidth={3} className="text-zinc-300" />
         )}
       </div>
-      <div className="mt-3 cursor-default">
+      <div className="mt-3 cursor-default p-4">
         <h1 style={GeistMono.style} className="font-black text-2xl">
           {t("welcome", { channel: channelInfo?.name })}
         </h1>
@@ -34,11 +35,12 @@ export default async function ChannelPage(props: {
           {t("description", { channel: channelInfo?.name })}
         </p>
       </div>
-      <div className="bg-white/10 w-full my-3 h-px text-center flex items-center justify-center text-xs">
+      {/* <div className="bg-white/10 w-full my-3 h-px text-center flex items-center justify-center text-xs">
         <time className="px-2 bg-background text-white/50 cursor-default select-none">
           {format(new Date(), "PPP")}
         </time>
-      </div>
+      </div> */}
+      <ChannelContainer />
     </div>
   );
 }
