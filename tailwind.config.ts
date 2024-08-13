@@ -10,6 +10,10 @@ const config = {
 	],
   prefix: "",
   theme: {
+    grayscale: {
+      50: '50%',
+      100: '100%',
+    },
     container: {
       center: true,
       padding: "2rem",

@@ -18,7 +18,9 @@ import {
   User2,
 } from "lucide-react";
 import type { Session } from "next-auth";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import Twemoji from "react-twemoji";
 
 type MessageProps = {
   id: string;
@@ -40,6 +42,7 @@ export const Message = ({
   session,
 }: MessageProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const t = useTranslations("channel.message");
   const [editedMessage, setEditedMessage] = useState<string>(message);
 
   useEffect(() => {
@@ -47,7 +50,6 @@ export const Message = ({
       if (e.key === "Escape") setIsEditing(false);
     });
   });
-  
 
   return (
     <ContextMenu>
@@ -67,23 +69,35 @@ export const Message = ({
               </div>
               {isEditing ? (
                 <div>
-                  <Textarea value={editedMessage} className="w-full" onChange={e => setEditedMessage(e.currentTarget.value)}/>
+                  <Textarea
+                    value={editedMessage}
+                    className="w-full"
+                    onChange={(e) => setEditedMessage(e.currentTarget.value)}
+                  />
                   <div className="text-xs">
-                    escape to{" "}
+                    {t("editing.esc-to")}{" "}
                     <span
                       className="cursor-pointer text-blue-400 hover:underline"
                       onClick={() => setIsEditing(false)}
                     >
-                      cancel
-                    </span>{" "}
-                    and enter to{" "}
+                      {t("editing.cancel")}{" "}
+                    </span>
+                    {t("editing.and-enter-to")}{" "}
                     <span className="cursor-pointer text-blue-400 hover:underline">
-                      save
+                      {t("editing.save")}
                     </span>
                   </div>
                 </div>
               ) : (
-                <div className="text-sm mt-1">{message}</div>
+                <Twemoji
+                  options={{
+                    base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
+                  }}
+                >
+                  <p className="text-sm mt-1 flex [&>img]:size-5 gap-1 items-center">
+                    {message}
+                  </p>
+                </Twemoji>
               )}
             </div>
           </div>
@@ -92,34 +106,34 @@ export const Message = ({
       <ContextMenuContent>
         <ContextMenuItem>
           <div className="flex justify-between items-center w-full gap-3">
-            <div className="text-xs">Reply</div>
+            <div className="text-xs">{t("reply")}</div>
             <Reply size={15} />
           </div>
         </ContextMenuItem>
-        {
+        {session?.user?.id === userId && (
           <ContextMenuItem onClick={() => setIsEditing(true)}>
             <div className="flex justify-between items-center w-full gap-3">
-              <div className="text-xs">Edit Text</div>
+              <div className="text-xs">{t("edit")}</div>
               <Pencil size={15} />
             </div>
           </ContextMenuItem>
-        }
+        )}
         <ContextMenuItem onClick={() => navigator.clipboard.writeText(message)}>
           <div className="flex justify-between items-center w-full gap-3">
-            <div className="text-xs">Copy Text</div>
+            <div className="text-xs">{t("copy-text")}</div>
             <Copy size={15} />
           </div>
         </ContextMenuItem>
         <ContextMenuItem onClick={() => navigator.clipboard.writeText(userId)}>
           <div className="flex justify-between items-center w-full gap-3">
-            <div className="text-xs">Copy User ID</div>
+            <div className="text-xs">{t("copy-user-id")}</div>
             <User2 size={15} />
           </div>
         </ContextMenuItem>
         {session?.user?.id === userId && (
           <ContextMenuItem danger>
             <div className="flex justify-between items-center w-full gap-3">
-              <div className="text-xs">Delete Message</div>
+              <div className="text-xs">{t("delete-message")}</div>
               <Trash size={15} />
             </div>
           </ContextMenuItem>
@@ -127,7 +141,7 @@ export const Message = ({
         <ContextMenuSeparator />
         <ContextMenuItem onClick={() => navigator.clipboard.writeText(id)}>
           <div className="flex justify-between items-center w-full gap-3">
-            <div className="text-xs">Copy Message ID</div>
+            <div className="text-xs">{t("copy-message-id")}</div>
             <MessageSquareDashed size={15} />
           </div>
         </ContextMenuItem>

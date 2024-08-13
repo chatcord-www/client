@@ -22,7 +22,21 @@
   "channel": {
     "welcome": "Welcome to #{channel}",
     "description": "This is the start of #{channel} channel",
-    "textarea-placeholder": "Message #{channel}"
+    "textarea-placeholder": "Message #{channel}",
+    "message": {
+      "edit": "Edit Text",
+      "reply": "Reply",
+      "copy-text": "Copy Text",
+      "copy-user-id": "Copy User ID",
+      "delete-message": "Delete Message",
+      "copy-message-id": "Copy Message ID",
+      "editing": {
+        "esc-to": "escape to",
+        "cancel": "cancel",
+        "and-enter-to": "and enter to",
+        "save": "save"
+      }
+    }
   },
   "modals": {
     "channel": {

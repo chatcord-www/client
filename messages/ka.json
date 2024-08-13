@@ -27,7 +27,21 @@
   "channel": {
     "welcome": "მოგესალმები #{channel}-ში",
     "description": "ეს #{channel} არხის დასაწყისია",
-    "textarea-placeholder": "გააგზავნე #{channel}-ში"
+    "textarea-placeholder": "გააგზავნე #{channel}-ში",
+    "message": {
+      "edit": "ტექსტის რედაქტირება",
+      "reply": "პასუხი",
+      "copy-text": "ტექსტის კოპირება",
+      "copy-user-id": "მომხმარებლის ID-ის კოპირება",
+      "delete-message": "მესიჯის წაშლა",
+      "copy-message-id": "მესიჯის ID-ის კოპირება",
+      "editing": {
+        "esc-to": "ESC რომ",
+        "cancel": "გააუქმო",
+        "and-enter-to": "და Enter რომ",
+        "save": "დაამახსოვრებინო"
+      }
+    }
   },
   "modals": {
     "channel": {

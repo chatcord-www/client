@@ -1,18 +1,15 @@
-import { Textarea } from "@/components/ui/textarea";
+import { ChatInput } from "@/components/ui/chat-input";
 import { db } from "@/server/db";
-import { getTranslations } from "next-intl/server";
-import React from "react";
 
 export default async function ChannelLayout({
   children,
-  params
+  params,
 }: React.PropsWithChildren<{
   params: {
     server_id: string;
     channel_id: string;
   };
 }>) {
-  const t = await getTranslations("channel");
   const channelInfo = await db.query.channels.findFirst({
     where: (channels, { eq, and }) =>
       and(
@@ -24,10 +21,7 @@ export default async function ChannelLayout({
   return (
     <div className="w-full h-[calc(100vh-20px)] flex flex-col">
       <div>{children}</div>
-      <Textarea
-        className="mt-auto resize-none"
-        placeholder={t("textarea-placeholder", { channel: channelInfo?.name })}
-      />
+      <ChatInput channelName={channelInfo?.name as string} />
     </div>
   );
 }
