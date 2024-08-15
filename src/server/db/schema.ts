@@ -21,7 +21,7 @@ export const activityEnum = pgEnum("activity", [
   "DND",
   "OFFLINE",
 ]);
-export const channelType = pgEnum("channel_type", ["VOICE", "TEXT"])
+export const channelType = pgEnum("channel_type", ["VOICE", "TEXT"]);
 
 export const users = createTable(
   "user",
@@ -90,6 +90,36 @@ export const categoriesRelations = relations(categories, ({ many, one }) => ({
   channels: many(channels),
   server: one(servers, {
     fields: [categories.serverId],
+    references: [servers.id],
+  }),
+}));
+
+export const messages = createTable("message", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  content: varchar("content", { length: 1024 }).notNull(),
+  userId: varchar("userId").references(() => users.id),
+  serverId: varchar("serverId").references(() => servers.id),
+  channelId: varchar("channelId").references(() => channels.id),
+  createdAt: timestamp("createdAt", {
+    mode: "date",
+    withTimezone: true,
+  }).default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  users: one(users, {
+    fields: [messages.userId],
+    references: [users.id],
+  }),
+  channels: one(channels, {
+    fields: [messages.channelId],
+    references: [channels.id],
+  }),
+  servers: one(servers, {
+    fields: [messages.serverId],
     references: [servers.id],
   }),
 }));

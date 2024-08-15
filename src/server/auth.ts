@@ -83,6 +83,7 @@ export const authOptions: NextAuthOptions = {
           activity: true,
           aboutMe: true,
           createdAt: true,
+          discriminator: true,
         },
         where: eq(users.id, token.sub as string),
       });
@@ -96,6 +97,7 @@ export const authOptions: NextAuthOptions = {
           status: profilePreferences?.status,
           aboutMe: profilePreferences?.aboutMe,
           createdAt: profilePreferences?.createdAt,
+          discrimantor: profilePreferences?.discriminator,
         },
         cookies: token.cookies,
       };

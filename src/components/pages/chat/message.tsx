@@ -54,7 +54,7 @@ export const Message = ({
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div className="py-3 hover:bg-slate-700/10 px-4">
+        <div className="py-3 hover:bg-slate-700/10 px-4 cursor-default">
           <div className="flex">
             <Avatar>
               <AvatarFallback>{username[0]}</AvatarFallback>
@@ -64,7 +64,7 @@ export const Message = ({
               <div className="flex">
                 <div className="text-sm">{username}</div>
                 <time className="text-xs ml-2 text-zinc-400">
-                  {format(createdAt, "PP")}
+                  {format(createdAt, "PPpp")}
                 </time>
               </div>
               {isEditing ? (

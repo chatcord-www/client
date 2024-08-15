@@ -2,6 +2,10 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
+export const metadata = {
+  title: "Chat • Discovery",
+};
+
 export default async function DiscoverPage() {
   const t = await getTranslations("discovery");
 

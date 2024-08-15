@@ -1,6 +1,5 @@
 import { ChannelContainer } from "@/components/pages/channel/container";
 import { db } from "@/server/db";
-import { format } from "date-fns";
 import { GeistMono } from "geist/font/mono";
 import { Hash, Volume2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";

@@ -1,16 +1,21 @@
 "use client";
 
+import { useOutSideClick } from "@/hooks/outside-click";
+import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmojiPicker, { EmojiStyle, type Theme } from "emoji-picker-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z, type ZodType } from "zod";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { Textarea } from "./textarea";
+import { useChatMessages } from "../providers/chat";
+import { Input } from "./input";
 
 type ChatInputProps = {
   channelName: string;
+  channelId: string;
+  serverId: string;
 };
 
 type TextareaFormType = {
@@ -21,11 +26,20 @@ export const TextareaFormSchema: ZodType<TextareaFormType> = z.object({
   text: z.string({ message: "required" }),
 });
 
-export const ChatInput = ({ channelName }: ChatInputProps) => {
+export const ChatInput = ({
+  channelName,
+  channelId,
+  serverId,
+}: ChatInputProps) => {
   const t = useTranslations("channel");
+  const [showEmojis, setShowEmojis] = useState<boolean>(false);
+  const emojiRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  useOutSideClick(emojiRef, () => setShowEmojis(false));
+  const { mutate: sendMessage } = api.sendMessage.useMutation();
+  const { refetchChat } = useChatMessages();
 
-  const { control, setValue, getValues } = useForm<
+  const { control, setValue, getValues, handleSubmit } = useForm<
     z.infer<typeof TextareaFormSchema>
   >({
     resolver: zodResolver(TextareaFormSchema),
@@ -34,17 +48,24 @@ export const ChatInput = ({ channelName }: ChatInputProps) => {
     },
   });
 
+  const onSubmit = ({ text }: TextareaFormType) => {
+    sendMessage(
+      { channelId, serverId, text },
+      {
+        onSuccess: () => {
+          setValue("text", "");
+          refetchChat?.();
+        },
+      },
+    );
+  };
+
   return (
-    <div className="relative">
-      <Popover>
-        <PopoverTrigger className="absolute right-2 top-2 cursor-pointer">
-          <img src="/assets/emoji.png" className="size-6 grayscale-100" />
-        </PopoverTrigger>
-        <PopoverContent
-          className="w-auto"
-          style={{
-            padding: 0,
-          }}
+    <>
+      {showEmojis && (
+        <div
+          className="absolute right-4 bottom-0 -translate-y-16 "
+          ref={emojiRef}
         >
           <EmojiPicker
             previewConfig={{}}
@@ -54,19 +75,29 @@ export const ChatInput = ({ channelName }: ChatInputProps) => {
               setValue("text", `${getValues("text") + emoji.emoji}`)
             }
           />
-        </PopoverContent>
-      </Popover>
-      <Controller
-        name="text"
-        control={control}
-        render={({ field }) => (
-          <Textarea
-            {...field}
-            className="mt-auto resize-none"
-            placeholder={t("textarea-placeholder", { channel: channelName })}
+        </div>
+      )}
+      <div className="relative">
+        <img
+          onClick={() => setShowEmojis(true)}
+          src="/assets/emoji.png"
+          className="size-5 grayscale-100 group-hover:grayscale-0 absolute right-2 top-2 cursor-pointer"
+        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="text"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder={t("textarea-placeholder", {
+                  channel: channelName,
+                })}
+              />
+            )}
           />
-        )}
-      />
-    </div>
+        </form>
+      </div>
+    </>
   );
 };
