@@ -1,7 +1,6 @@
 import { createContext } from "react";
 
 export type ChatContextProps = {
-  refetchChat?: () => void;
   loading: boolean;
   messages: {
     channelId: string;

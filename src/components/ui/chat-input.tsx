@@ -1,6 +1,8 @@
 "use client";
 
+import { useChatMessages } from "@/hooks/chat-messages";
 import { useOutSideClick } from "@/hooks/outside-click";
+import { socket } from "@/lib/socket";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmojiPicker, { EmojiStyle, type Theme } from "emoji-picker-react";
@@ -9,7 +11,6 @@ import { useTheme } from "next-themes";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z, type ZodType } from "zod";
-import { useChatMessages } from "../providers/chat";
 import { Input } from "./input";
 
 type ChatInputProps = {
@@ -37,7 +38,7 @@ export const ChatInput = ({
   const { theme } = useTheme();
   useOutSideClick(emojiRef, () => setShowEmojis(false));
   const { mutate: sendMessage } = api.sendMessage.useMutation();
-  const { refetchChat } = useChatMessages();
+  const { addNewMessage } = useChatMessages();
 
   const { control, setValue, getValues, handleSubmit } = useForm<
     z.infer<typeof TextareaFormSchema>
@@ -52,9 +53,10 @@ export const ChatInput = ({
     sendMessage(
       { channelId, serverId, text },
       {
-        onSuccess: () => {
+        onSuccess: (message) => {
           setValue("text", "");
-          refetchChat?.();
+          socket.emit("receive_message", serverId, channelId, message);
+          addNewMessage(message);
         },
       },
     );

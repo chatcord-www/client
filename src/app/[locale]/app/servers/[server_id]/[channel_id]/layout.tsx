@@ -1,4 +1,3 @@
-import { ChatProvider } from "@/components/providers/chat";
 import { ChatInput } from "@/components/ui/chat-input";
 import { db } from "@/server/db";
 
@@ -19,10 +18,10 @@ export async function generateMetadata({ params }: Props) {
     with: {
       server: {
         columns: {
-          name: true
-        }
-      }
-    }
+          name: true,
+        },
+      },
+    },
   });
 
   return {
@@ -49,14 +48,12 @@ export default async function ChannelLayout({
 
   return (
     <div className="w-full h-[calc(100vh-20px)] flex flex-col">
-      <ChatProvider channelId={params.channel_id} serverId={params.server_id}>
-        <div>{children}</div>
-        <ChatInput
-          channelName={channelInfo?.name as string}
-          channelId={params.channel_id}
-          serverId={params.server_id}
-        />
-      </ChatProvider>
+      <div>{children}</div>
+      <ChatInput
+        channelName={channelInfo?.name as string}
+        channelId={params.channel_id}
+        serverId={params.server_id}
+      />
     </div>
   );
 }

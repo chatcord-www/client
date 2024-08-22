@@ -1,5 +1,5 @@
 {
-  "id": "4514349b-c22e-4c86-b084-0fac656825e4",
+  "id": "43a1fbe3-9ae8-4eaf-9451-2cb1471a201a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -210,6 +210,93 @@
           "tableTo": "client_server",
           "columnsFrom": [
             "serverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.client_message": {
+      "name": "client_message",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "serverId": {
+          "name": "serverId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "channelId": {
+          "name": "channelId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_message_userId_client_user_id_fk": {
+          "name": "client_message_userId_client_user_id_fk",
+          "tableFrom": "client_message",
+          "tableTo": "client_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "client_message_serverId_client_server_id_fk": {
+          "name": "client_message_serverId_client_server_id_fk",
+          "tableFrom": "client_message",
+          "tableTo": "client_server",
+          "columnsFrom": [
+            "serverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "client_message_channelId_client_channel_id_fk": {
+          "name": "client_message_channelId_client_channel_id_fk",
+          "tableFrom": "client_message",
+          "tableTo": "client_channel",
+          "columnsFrom": [
+            "channelId"
           ],
           "columnsTo": [
             "id"

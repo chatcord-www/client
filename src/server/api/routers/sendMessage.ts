@@ -13,14 +13,24 @@ export const sendMessage = publicProcedure
     }),
   )
   .mutation(async ({ input, ctx }) => {
-    await ctx.db.insert(messages).values({
-      content: input.text,
-      channelId: input.channelId,
-      serverId: input.serverId,
-      userId: ctx.session?.user.id,
-    });
+    const message = await ctx.db
+      .insert(messages)
+      .values({
+        content: input.text,
+        channelId: input.channelId,
+        serverId: input.serverId,
+        userId: ctx.session?.user.id,
+      })
+      .returning();
 
     return {
-      success: true,
+      content: message[0]?.content as string,
+      id: message[0]?.id as string,
+      createdAt: message[0]?.createdAt as Date,
+      user: {
+        id: ctx.session?.user.id as string,
+        name: ctx.session?.user.name as string,
+        avatar: ctx.session?.user.image as string,
+      },
     };
   });

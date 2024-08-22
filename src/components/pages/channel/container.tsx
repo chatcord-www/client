@@ -1,12 +1,36 @@
 "use client";
-import { useChatMessages } from "@/components/providers/chat";
+import { ChatMessage, useChatMessages } from "@/hooks/chat-messages";
+import { api } from "@/trpc/react";
 import type { Session } from "next-auth";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import { Message } from "../chat/message";
 
-export const ChannelContainer = () => {
+type ChannelContainerProps = {
+  serverId: string;
+  channelId: string;
+};
+
+export const ChannelContainer = ({
+  channelId,
+  serverId,
+}: ChannelContainerProps) => {
   const { data: session } = useSession();
-  const { messages, loading } = useChatMessages();
+  const { data: apiMessages, isLoading } = api.getMessages.useQuery({
+    channelId,
+    serverId,
+  });
+  const { messages, loading, loadMessages, setLoading } = useChatMessages();  
+
+  useEffect(() => {
+    if (apiMessages?.length) {
+      loadMessages(apiMessages as ChatMessage[]);      
+    }
+  }, [apiMessages]);
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   return (
     <div className="w-full h-[calc(100vh-210px)] pb-2">
@@ -24,11 +48,11 @@ export const ChannelContainer = () => {
           <Message
             key={message.id}
             id={message.id}
-            avatar={message.users?.image}
+            avatar={message.user?.avatar}
             createdAt={message.createdAt}
             message={message.content}
-            userId={message.userId}
-            username={message.users?.name}
+            userId={message.user.id}
+            username={message.user?.name}
             session={session as Session}
           />
         ))

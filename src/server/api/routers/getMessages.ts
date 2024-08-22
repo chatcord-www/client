@@ -22,7 +22,14 @@ export const getMessages = publicProcedure
       with: { users: true },
     });
 
-    return {
-      messages,
-    };
+    return messages.map((message) => ({
+      content: message.content,
+      id: message.id,
+      createdAt: message.createdAt,
+      user: {
+        id: message.users?.id,
+        name: message.users?.name,
+        avatar: message.users?.image,
+      },
+    }));
   });
