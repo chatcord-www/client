@@ -5,6 +5,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
+import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "@/env";
@@ -16,6 +17,7 @@ import {
   users,
   verificationTokens,
 } from "@/server/db/schema";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { encode } from "next-auth/jwt";
 
@@ -99,6 +101,27 @@ export const authOptions: NextAuthOptions = {
     verificationTokensTable: verificationTokens as never,
   }) as Adapter,
   providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const user = await db.query.users.findFirst({
+          where: eq(users.email, credentials.email),
+        });
+
+        if (!user?.password) return null;
+
+        const valid = await bcrypt.compare(credentials.password, user.password);
+        if (!valid) return null;
+
+        return { id: user.id, name: user.name, email: user.email };
+      },
+    }),
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,

@@ -113,4 +113,36 @@ export const authRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  login: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        password: z.string().min(8),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.query.users.findFirst({
+        columns: { id: true, password: true },
+        where: eq(users.email, input.email),
+      });
+
+      if (!user?.password) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "invalid-credentials",
+        });
+      }
+
+      const valid = await bcrypt.compare(input.password, user.password);
+
+      if (!valid) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "invalid-credentials",
+        });
+      }
+
+      return { userId: user.id };
+    }),
 });

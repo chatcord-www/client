@@ -3,26 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "@/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { LoginFormSchema, LoginFormType } from "./types";
+import { Eye, Loader2 } from "lucide-react";
+import { Controller } from "react-hook-form";
+import { useSigninForm } from "./useSigninForm";
 
 export const LoginForm = () => {
-  const t = useTranslations("login");
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const { handleSubmit, control } = useForm<LoginFormType>({
-    resolver: zodResolver(LoginFormSchema),
-  });
-
-  const formSubmitHandler = (data: LoginFormType) => {
-    console.log(data);
-  };
+  const {
+    togglePasswordVisible,
+    passwordVisible,
+    isPending,
+    submitHandler,
+    serverError,
+    handleSubmit,
+    control,
+    t,
+  } = useSigninForm();
 
   return (
-    <form onSubmit={handleSubmit(formSubmitHandler)}>
+    <form onSubmit={handleSubmit(submitHandler)}>
       <Controller
         name="email"
         control={control}
@@ -50,12 +48,13 @@ export const LoginForm = () => {
                 type={!passwordVisible ? "password" : "text"}
                 className="pr-8"
               />
-              <Eye
-                onClick={() => setPasswordVisible((prev) => !prev)}
-                strokeWidth={1}
-                size={18}
-                className="absolute right-2 cursor-pointer"
-              />
+              <button
+                type="button"
+                onClick={togglePasswordVisible}
+                className="absolute right-2"
+              >
+                <Eye strokeWidth={1} size={18} className="cursor-pointer" />
+              </button>
             </div>
             {fieldState.error && (
               <p className="text-xs text-red-500">
@@ -73,7 +72,12 @@ export const LoginForm = () => {
           {t("forgot")}
         </Link>
       </div>
-      <Button className="mt-3 w-full">{t("submit")}</Button>
+      {serverError && (
+        <p className="mt-2 text-xs text-red-500">{t(`errors.${serverError}`)}</p>
+      )}
+      <Button type="submit" className="mt-3 w-full" disabled={isPending}>
+        {isPending ? <Loader2 className="animate-spin" /> : t("submit")}
+      </Button>
     </form>
   );
 };
