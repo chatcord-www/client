@@ -15,7 +15,7 @@ export const SignupFormSchema: ZodType<SignupFormType> = z
       .min(8, { message: "password-short" }),
     repeat_password: z
       .string({ message: "required" })
-      .min(8, { message: "password-not-match" }),
+      .min(8, { message: "password-short" }),
     username: z
       .string({ message: "required" })
       .min(4, { message: "username-min" }),

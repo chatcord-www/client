@@ -2,28 +2,26 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { SignupFormSchema, SignupFormType } from "./types";
+import { Eye, Loader2 } from "lucide-react";
+import { Controller } from "react-hook-form";
+import { useSignupForm } from "./useSignupForm";
 
 export const SingupForm = () => {
-  const t = useTranslations("signup");
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [repeatPasswordVisible, setRepeatPasswordVisible] =
-    useState<boolean>(false);
-  const { handleSubmit, control } = useForm<SignupFormType>({
-    resolver: zodResolver(SignupFormSchema),
-  });
-
-  const formSubmitHandler = (data: SignupFormType) => {
-    console.log(data);
-  };
+  const {
+    toggleRepeatPasswordVisible,
+    togglePasswordVisible,
+    repeatPasswordVisible,
+    passwordVisible,
+    isPending,
+    submitHandler,
+    serverError,
+    handleSubmit,
+    control,
+    t,
+  } = useSignupForm();
 
   return (
-    <form onSubmit={handleSubmit(formSubmitHandler)}>
+    <form onSubmit={handleSubmit(submitHandler)}>
       <Controller
         name="username"
         control={control}
@@ -66,12 +64,14 @@ export const SingupForm = () => {
                 type={!passwordVisible ? "password" : "text"}
                 className="pr-8"
               />
-              <Eye
-                onClick={() => setPasswordVisible((prev) => !prev)}
-                strokeWidth={1}
-                size={18}
-                className="absolute right-2 cursor-pointer"
-              />
+              <button
+                type="button"
+                aria-label={passwordVisible ? t("form.hide-password") : t("form.show-password")}
+                onClick={togglePasswordVisible}
+                className="absolute right-2"
+              >
+                <Eye strokeWidth={1} size={18} className="cursor-pointer" />
+              </button>
             </div>
             {fieldState.error && (
               <p className="text-xs text-red-500">
@@ -93,12 +93,14 @@ export const SingupForm = () => {
                 type={!repeatPasswordVisible ? "password" : "text"}
                 className="pr-8"
               />
-              <Eye
-                onClick={() => setRepeatPasswordVisible((prev) => !prev)}
-                strokeWidth={1}
-                size={18}
-                className="absolute right-2 cursor-pointer"
-              />
+              <button
+                type="button"
+                aria-label={repeatPasswordVisible ? t("form.hide-password") : t("form.show-password")}
+                onClick={toggleRepeatPasswordVisible}
+                className="absolute right-2"
+              >
+                <Eye strokeWidth={1} size={18} className="cursor-pointer" />
+              </button>
             </div>
             {fieldState.error && (
               <p className="text-xs text-red-500">
@@ -108,7 +110,12 @@ export const SingupForm = () => {
           </div>
         )}
       />
-      <Button className="mt-3 w-full">{t("submit")}</Button>
+      {serverError && (
+        <p className="mt-2 text-xs text-red-500">{t(`errors.${serverError}`)}</p>
+      )}
+      <Button type="submit" className="mt-3 w-full" disabled={isPending}>
+        {isPending ? <Loader2 className="animate-spin" /> : t("submit")}
+      </Button>
     </form>
   );
 };

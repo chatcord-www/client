@@ -90,7 +90,8 @@
     "errors": {
       "email": "Email is invalid",
       "required": "This field is required",
-      "password-short": "Password must be at least 8 characters"
+      "password-short": "Password must be at least 8 characters",
+      "invalid-credentials": "Invalid email or password"
     },
     "submit": "Log in"
   },
@@ -102,14 +103,18 @@
       "username": "Username",
       "email": "Email",
       "password": "Password",
-      "repeat-password": "Repeat Password"
+      "repeat-password": "Repeat Password",
+      "show-password": "Show password",
+      "hide-password": "Hide password"
     },
     "errors": {
       "email": "Email is invalid",
       "password-short": "Password must be at least 8 characters",
       "password-not-match": "Repeated password does not match password",
       "username-min": "Username must contain at least 4 characters",
-      "required": "This field is required"
+      "required": "This field is required",
+      "email-taken": "An account with this email already exists",
+      "unexpected": "Something went wrong. Please try again."
     },
     "submit": "Sign up"
   },

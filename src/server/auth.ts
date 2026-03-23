@@ -8,6 +8,7 @@ import { type Adapter } from "next-auth/adapters";
 import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "@/env";
+import { generateUniqueDiscriminator } from "@/server/discriminator";
 import { db } from "@/server/db";
 import {
   accounts,
@@ -15,7 +16,7 @@ import {
   users,
   verificationTokens,
 } from "@/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { encode } from "next-auth/jwt";
 
 export type USER_STATUS_ENUM = "ONLINE" | "IDLE" | "DND" | "OFFLINE";
@@ -37,19 +38,7 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   events: {
     createUser: async ({ user }) => {
-      let discriminator;
-      let existingUser;
-
-      do {
-        discriminator = Math.floor(1000 + Math.random() * 9000).toString();
-        existingUser = await db.query.users.findFirst({
-          columns: { id: true },
-          where: and(
-            eq(users.name, user.name!),
-            eq(users.discriminator, discriminator),
-          ),
-        });
-      } while (existingUser);
+      const discriminator = await generateUniqueDiscriminator(user.name!);
 
       await db
         .update(users)
@@ -104,10 +93,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
+    usersTable: users as never,
+    accountsTable: accounts as never,
+    sessionsTable: sessions as never,
+    verificationTokensTable: verificationTokens as never,
   }) as Adapter,
   providers: [
     DiscordProvider({
