@@ -36,7 +36,8 @@ export const useSignupForm = () => {
       router.push("/login");
     } catch (error) {
       if (error instanceof TRPCClientError) {
-        const errorMessage = error.shape?.message ?? error.message;
+        const shape = error.shape as { message?: string } | undefined;
+        const errorMessage = shape?.message ?? error.message;
 
         if (knownSignupErrors.has(errorMessage)) {
           setServerError(errorMessage);
