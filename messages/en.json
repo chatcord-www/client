@@ -118,6 +118,20 @@
     },
     "submit": "Sign up"
   },
+  "verify-email": {
+    "title": "Verify your email",
+    "subtitle": "We sent a 6-digit code to your email. Enter it below.",
+    "form": {
+      "code": "Confirmation code"
+    },
+    "errors": {
+      "invalid-code": "The code you entered is incorrect",
+      "token-expired": "Your verification link has expired. Please sign up again.",
+      "email-taken": "An account with this email already exists",
+      "unexpected": "Something went wrong. Please try again."
+    },
+    "submit": "Verify"
+  },
   "recover": {
     "title": "Recover password",
     "subtitle": "Input email of your lost account",

@@ -27,13 +27,13 @@ export const useSignupForm = () => {
   const submitHandler = async (data: SignupFormType) => {
     setServerError(null);
     try {
-      await signup.mutateAsync({
+      const result = await signup.mutateAsync({
         username: data.username,
         email: data.email,
         password: data.password,
         repeat_password: data.repeat_password,
       });
-      router.push("/login");
+      router.push(`/verify-email?token=${encodeURIComponent(result.token)}`);
     } catch (error) {
       if (error instanceof TRPCClientError) {
         const shape = error.shape as { message?: string } | undefined;
