@@ -48,7 +48,7 @@ export default async function ChannelLayout({
 
   return (
     <div className="w-full h-[calc(100vh-20px)] flex flex-col">
-      <div>{children}</div>
+      <div className="flex-1 overflow-hidden">{children}</div>
       <ChatInput
         channelName={channelInfo?.name as string}
         channelId={params.channel_id}

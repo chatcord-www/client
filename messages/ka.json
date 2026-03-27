@@ -28,6 +28,7 @@
     "welcome": "მოგესალმები #{channel}-ში",
     "description": "ეს #{channel} არხის დასაწყისია",
     "textarea-placeholder": "გააგზავნე #{channel}-ში",
+    "no-messages": "ჯერ მესიჯები არ არის. დაიწყე საუბარი!",
     "message": {
       "edit": "ტექსტის რედაქტირება",
       "reply": "პასუხი",
