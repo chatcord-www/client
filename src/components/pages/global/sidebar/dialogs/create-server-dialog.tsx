@@ -18,8 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ServerType, useServers } from "@/hooks/servers";
-import { instance } from "@/trpc/react";
+import { useServers } from "@/hooks/servers";
+import { api } from "@/trpc/react";
+import { useRouter } from "@/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -43,9 +44,11 @@ const CreateServerSchema: ZodType<CreateServerFormType> = z.object({
 export const CreateServerDialog = () => {
   const { addNewServer } = useServers();
   const t = useTranslations("create-server");
+  const router = useRouter();
   const [file, setFile] = useState<File>();
-  const [loading, setLoading] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const createServer = api.server.create.useMutation();
+
   const { handleSubmit, control, formState, reset } =
     useForm<CreateServerFormType>({
       resolver: zodResolver(CreateServerSchema),
@@ -53,25 +56,19 @@ export const CreateServerDialog = () => {
     });
 
   const onSubmit = async (data: CreateServerFormType) => {
-    const formData: FormData = new FormData();
-    if (file) {
-      formData.append("icon", file);
-    }
+    try {
+      const server = await createServer.mutateAsync({
+        name: data.name,
+        public: data.public,
+      });
 
-    formData.append("name", data.name);
-    formData.append("public", JSON.stringify(data.public));
-
-    setLoading(true);
-
-    const response = await (await instance()).post("create-server", formData);
-
-    if ((response.data as { success: true }).success) {
-      setLoading(false);
+      addNewServer(server);
       setOpenDialog(false);
       setFile(undefined);
       reset();
-      // eslint-disable-next-line
-      addNewServer(response.data.serverInfo);
+      router.push(`/app/servers/${server.id}`);
+    } catch {
+      
     }
   };
 
@@ -127,8 +124,8 @@ export const CreateServerDialog = () => {
               />
             </div>
           </div>
-          <Button className="mt-3 w-full" disabled={loading}>
-            {loading ? <Loader2 className="animate-spin" /> : t("create")}
+          <Button className="mt-3 w-full" disabled={createServer.isPending}>
+            {createServer.isPending ? <Loader2 className="animate-spin" /> : t("create")}
           </Button>
         </form>
       </DialogContent>

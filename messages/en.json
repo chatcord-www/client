@@ -23,6 +23,7 @@
     "welcome": "Welcome to #{channel}",
     "description": "This is the start of #{channel} channel",
     "textarea-placeholder": "Message #{channel}",
+    "no-messages": "No messages yet. Start the conversation!",
     "message": {
       "edit": "Edit Text",
       "reply": "Reply",

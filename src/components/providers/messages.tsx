@@ -52,7 +52,7 @@ export const MessagesProvider = ({
   useEffect(() => {
     if (!socketConnected) return;
     socket.emit("connect_guild", serverId, channelId);
-  }, []);
+  }, [socketConnected, serverId, channelId]);
 
   return <>{children}</>;
 };
