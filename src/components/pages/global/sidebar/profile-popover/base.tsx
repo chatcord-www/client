@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { PropsWithChildren, useMemo, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { Profile } from "../../profile";
 import { ActivityProfilePopover } from "./activity";
 
@@ -33,6 +33,12 @@ export const BaseProfilePopover = ({
   const [clientActivity, setClientActivity] = useState<USER_STATUS_ENUM>(
     session?.user.activity ?? "ONLINE",
   );
+
+  useEffect(() => {
+    if (session?.user.activity) {
+      setClientActivity(session.user.activity);
+    }
+  }, [session?.user.activity]);
   const t = useTranslations();
   const currentLocale = locale === "en" ? enUS : ka;
 

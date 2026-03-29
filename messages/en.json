@@ -144,5 +144,9 @@
       "required": "This field is required"
     },
     "submit": "Recover"
+  },
+  "members": {
+    "online": "Online",
+    "offline": "Offline"
   }
 }

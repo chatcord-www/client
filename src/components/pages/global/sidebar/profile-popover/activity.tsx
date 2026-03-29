@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api } from "@/trpc/react";
 import { CircleSlash, Moon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PropsWithChildren } from "react";
@@ -21,9 +22,16 @@ export const ActivityProfilePopover = ({
   setActivity,
 }: PropsWithChildren<ActivityProfilePopoverProps>) => {
   const t = useTranslations();
+  const utils = api.useContext();
+  const updateActivity = api.user.updateActivity.useMutation({
+    onSuccess: () => {
+      void utils.server.getMembers.invalidate();
+    },
+  });
 
   const activityOnChange = (value: USER_STATUS_ENUM) => {
     setActivity(value);
+    updateActivity.mutate({ activity: value });
   };
 
   return (

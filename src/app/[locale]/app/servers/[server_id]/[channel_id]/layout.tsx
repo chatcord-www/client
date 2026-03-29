@@ -1,4 +1,5 @@
 import { ChatInput } from "@/components/ui/chat-input";
+import { MembersList } from "@/components/pages/channel/members-list";
 import { db } from "@/server/db";
 
 type Props = {
@@ -47,13 +48,16 @@ export default async function ChannelLayout({
   });
 
   return (
-    <div className="w-full h-[calc(100vh-20px)] flex flex-col">
+    <div className="w-full h-[calc(100vh-20px)] flex">
+      <div className="flex-1 flex flex-col min-w-0">
       <div className="flex-1 overflow-hidden">{children}</div>
       <ChatInput
         channelName={channelInfo?.name as string}
         channelId={params.channel_id}
         serverId={params.server_id}
       />
+      </div>
+      <MembersList serverId={params.server_id} />
     </div>
   );
 }
