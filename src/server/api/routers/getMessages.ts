@@ -18,7 +18,6 @@ export const getMessages = publicProcedure
           eq(messages.serverId, input.serverId),
           eq(messages.channelId, input.channelId),
         ),
-      limit: 50,
       with: { users: true },
     });
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { useChatMessages } from "@/hooks/chat-messages";
 import { useOutSideClick } from "@/hooks/outside-click";
 import { socket } from "@/lib/socket";
 import { api } from "@/trpc/react";
@@ -38,7 +37,6 @@ export const ChatInput = ({
   const { theme } = useTheme();
   useOutSideClick(emojiRef, () => setShowEmojis(false));
   const { mutate: sendMessage } = api.sendMessage.useMutation();
-  const { addNewMessage } = useChatMessages();
 
   const { control, setValue, getValues, handleSubmit } = useForm<
     z.infer<typeof TextareaFormSchema>
@@ -50,13 +48,13 @@ export const ChatInput = ({
   });
 
   const onSubmit = ({ text }: TextareaFormType) => {
+    if (!text || !text.trim()) return;
     sendMessage(
       { channelId, serverId, text },
       {
         onSuccess: (message) => {
           setValue("text", "");
           socket.emit("receive_message", serverId, channelId, message);
-          addNewMessage(message);
         },
       },
     );
