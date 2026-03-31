@@ -17,6 +17,7 @@ type ChatMessages = {
   setLoading: (value: boolean) => void;
   loadMessages: (messages: ChatMessage[]) => void;
   addNewMessage: (message: ChatMessage) => void;
+  clearMessages: () => void;
 };
 
 export const useChatMessages = create<ChatMessages>()((set) => ({
@@ -26,4 +27,5 @@ export const useChatMessages = create<ChatMessages>()((set) => ({
   addNewMessage: (message) =>
     set((prev) => ({ messages: [...prev.messages, message] })),
   loadMessages: (messages) => set({ messages }),
+  clearMessages: () => set({ messages: [] }),
 }));

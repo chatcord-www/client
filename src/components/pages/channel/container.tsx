@@ -23,7 +23,11 @@ export const ChannelContainer = ({
     channelId,
     serverId,
   });
-  const { messages, loading, loadMessages, setLoading } = useChatMessages();
+  const { messages, loading, loadMessages, setLoading, clearMessages } = useChatMessages();
+
+  useEffect(() => {
+    clearMessages();
+  }, [channelId, serverId]);
 
   useEffect(() => {
     if (apiMessages?.length) {
