@@ -3,7 +3,7 @@ import { LocalesType } from "@/i18n";
 import { redirect } from "@/navigation";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { servers } from "@/server/db/schema";
+import { servers, usersToServers } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { ReactNode } from "react";
 
@@ -20,9 +20,14 @@ export default async function AppLayout({
     redirect("/");
   }
   
-  const serversList = await db.query.servers.findMany({
-    where: eq(servers.ownerId, session?.user.id as string),
+  const joinedServers = await db.query.usersToServers.findMany({
+    where: eq(usersToServers.userId, session?.user.id as string),
+    with: {
+      server: true,
+    },
   });
+
+  const serversList = joinedServers.map((entry) => entry.server);
 
 
   return (

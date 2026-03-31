@@ -1,6 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { channels, servers, usersToServers } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { channels, servers, users, usersToServers } from "@/server/db/schema";
+import { TRPCError } from "@trpc/server";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const serverRouter = createTRPCRouter({
@@ -64,5 +65,66 @@ export const serverRouter = createTRPCRouter({
       });
 
       return members.map((m) => m.user);
+    }),
+
+  getPublicServers: protectedProcedure.query(async ({ ctx }) => {
+    const publicServers = await ctx.db.query.servers.findMany({
+      where: eq(servers.public, true),
+      with: {
+        owner: {
+          columns: { id: true, name: true, image: true },
+        },
+        members: true,
+      },
+    });
+
+    return publicServers.map((s) => ({
+      id: s.id,
+      name: s.name,
+      icon: s.icon,
+      ownerId: s.ownerId,
+      ownerName: s.owner.name,
+      memberCount: s.members.length,
+      isMember: s.members.some((m) => m.userId === ctx.session.user.id),
+    }));
+  }),
+
+  join: protectedProcedure
+    .input(z.object({ serverId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const server = await ctx.db.query.servers.findFirst({
+        where: and(
+          eq(servers.id, input.serverId),
+          eq(servers.public, true),
+        ),
+      });
+
+      if (!server) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Server not found or is not public",
+        });
+      }
+
+      const existing = await ctx.db.query.usersToServers.findFirst({
+        where: and(
+          eq(usersToServers.userId, ctx.session.user.id),
+          eq(usersToServers.serverId, input.serverId),
+        ),
+      });
+
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Already a member of this server",
+        });
+      }
+
+      await ctx.db.insert(usersToServers).values({
+        userId: ctx.session.user.id,
+        serverId: input.serverId,
+      });
+
+      return { serverId: server.id, name: server.name };
     }),
 });

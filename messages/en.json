@@ -77,7 +77,12 @@
   },
   "discovery": {
     "title": "Discovery",
-    "input-placeholer": "Explore communities"
+    "input-placeholer": "Explore communities",
+    "no-servers": "No public servers available yet.",
+    "owner": "Owner",
+    "members": "members",
+    "join": "Join",
+    "joined": "Joined"
   },
   "login": {
     "title": "Welcome back!",
