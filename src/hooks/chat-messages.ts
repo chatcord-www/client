@@ -4,6 +4,7 @@ export type ChatMessage = {
   content: string;
   id: string;
   createdAt: Date,
+  editedAt?: Date;
   user: {
     id: string;
     name: string;

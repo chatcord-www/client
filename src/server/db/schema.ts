@@ -108,6 +108,10 @@ export const messages = createTable("message", {
     mode: "date",
     withTimezone: true,
   }).default(sql`CURRENT_TIMESTAMP`),
+  editedAt: timestamp("editedAt", {
+    mode: "date",
+    withTimezone: true,
+  }),
 });
 
 export const messagesRelations = relations(messages, ({ one }) => ({

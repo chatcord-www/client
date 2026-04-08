@@ -1,0 +1,1 @@
+ALTER TABLE "client_message" ADD COLUMN "editedAt" timestamp with time zone;

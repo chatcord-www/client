@@ -19,12 +19,14 @@ export const getMessages = publicProcedure
           eq(messages.channelId, input.channelId),
         ),
       with: { users: true },
+      orderBy: (messages, { asc }) => asc(messages.createdAt),
     });
 
     return messages.map((message) => ({
       content: message.content,
       id: message.id,
       createdAt: message.createdAt,
+      editedAt: message.editedAt,
       user: {
         id: message.users?.id,
         name: message.users?.name,

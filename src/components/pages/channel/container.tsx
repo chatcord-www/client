@@ -24,6 +24,11 @@ export const ChannelContainer = ({
     serverId,
   });
   const { messages, loading, loadMessages, setLoading, clearMessages } = useChatMessages();
+  const editMessageMutation = api.editMessage.useMutation();
+
+  const handleEditMessage = async ({ messageId, newContent }: { messageId: string; newContent: string }) => {
+    return editMessageMutation.mutateAsync({ messageId, newContent });
+  };
 
   useEffect(() => {
     clearMessages();
@@ -71,6 +76,8 @@ export const ChannelContainer = ({
             userId={message.user.id}
             username={message.user?.name}
             session={session as Session}
+            editedAt={message.editedAt}
+            onEditMessage={handleEditMessage}
           />
         ))
       )}

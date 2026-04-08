@@ -20,6 +20,7 @@ import {
 import type { Session } from "next-auth";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { api } from "@/trpc/react";
 import Twemoji from "react-twemoji";
 
 type MessageProps = {
@@ -30,6 +31,8 @@ type MessageProps = {
   message: string;
   createdAt: Date;
   session: Session;
+  editedAt?: Date;
+  onEditMessage: (params: { messageId: string; newContent: string }) => Promise<any>;
 };
 
 export const Message = ({
@@ -40,16 +43,41 @@ export const Message = ({
   id,
   userId,
   session,
+  editedAt,
+  onEditMessage,
 }: MessageProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const t = useTranslations("channel.message");
   const [editedMessage, setEditedMessage] = useState<string>(message);
+  const utils = api.useUtils?.();
 
   useEffect(() => {
-    window.addEventListener("keydown", (e) => {
+    const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsEditing(false);
-    });
-  });
+      if (isEditing && e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isEditing, editedMessage]);
+
+  const handleSave = async () => {
+    const trimmed = editedMessage.trim();
+    if (trimmed === message) return;
+    if (!trimmed) return;
+    try {
+      await onEditMessage({
+        messageId: id,
+        newContent: trimmed,
+      });
+      await utils?.getMessages?.invalidate?.();
+      setIsEditing(false);
+    } catch (error) {
+      console.log("Failed to edit message:", error);
+    }
+  };
 
   return (
     <ContextMenu>
@@ -61,9 +89,9 @@ export const Message = ({
               <AvatarImage src={avatar} />
             </Avatar>
             <div className="ml-2 w-full">
-              <div className="flex">
+              <div className="flex items-center gap-2">
                 <div className="text-sm">{username}</div>
-                <time className="text-xs ml-2 text-zinc-400">
+                <time className="text-xs text-zinc-400">
                   {format(createdAt, "PPpp")}
                 </time>
               </div>
@@ -73,19 +101,24 @@ export const Message = ({
                     value={editedMessage}
                     className="w-full"
                     onChange={(e) => setEditedMessage(e.currentTarget.value)}
+                    autoFocus
                   />
-                  <div className="text-xs">
-                    {t("editing.esc-to")}{" "}
+                  <div className="text-xs mt-1 flex gap-2 items-center">
+                    {t("editing.esc-to")} 
                     <span
                       className="cursor-pointer text-blue-400 hover:underline"
                       onClick={() => setIsEditing(false)}
                     >
-                      {t("editing.cancel")}{" "}
+                      {t("editing.cancel")}
                     </span>
-                    {t("editing.and-enter-to")}{" "}
-                    <span className="cursor-pointer text-blue-400 hover:underline">
+                    {t("editing.and-enter-to")}
+                    <button
+                      className="cursor-pointer text-blue-400 hover:underline disabled:opacity-50"
+                      onClick={handleSave}
+                      disabled={editedMessage.trim() === message}
+                    >
                       {t("editing.save")}
-                    </span>
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -94,9 +127,12 @@ export const Message = ({
                     base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
                   }}
                 >
-                  <p className="text-sm mt-1 flex [&>img]:size-5 gap-1 items-center">
+                  <div className="flex gap-1 mt-1 [&>img]:size-5 items-center">
+                  <p className="text-sm">
                     {message}
                   </p>
+                  <p>{editedAt && (<span className="text-xs text-gray-500">(edited)</span>)}</p>
+                  </div>
                 </Twemoji>
               )}
             </div>

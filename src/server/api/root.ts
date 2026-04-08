@@ -4,6 +4,7 @@ import { getMessages } from "./routers/getMessages";
 import { sendMessage } from "./routers/sendMessage";
 import { serverRouter } from "./routers/server";
 import { userRouter } from "./routers/user";
+import { editMessage } from "./routers/editMessage";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -11,6 +12,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   sendMessage,
   getMessages,
+  editMessage,
 });
 
 export type AppRouter = typeof appRouter;
