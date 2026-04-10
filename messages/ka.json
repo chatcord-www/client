@@ -36,6 +36,12 @@
       "copy-user-id": "მომხმარებლის ID-ის კოპირება",
       "delete-message": "მესიჯის წაშლა",
       "copy-message-id": "მესიჯის ID-ის კოპირება",
+      "delete-modal": {
+        "title": "მესიჯის წაშლა",
+        "description": "დარწმუნებული ხარ, რომ ამ მესიჯის წაშლა გინდა?",
+        "cancel": "გაუქმება",
+        "confirm": "წაშლა"
+      },
       "editing": {
         "esc-to": "ESC რომ",
         "cancel": "გააუქმო",

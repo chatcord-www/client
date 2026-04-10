@@ -31,6 +31,12 @@
       "copy-user-id": "Copy User ID",
       "delete-message": "Delete Message",
       "copy-message-id": "Copy Message ID",
+      "delete-modal": {
+        "title": "Delete Message",
+        "description": "Are you sure you want to delete this message?",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
       "editing": {
         "esc-to": "escape to",
         "cancel": "cancel",

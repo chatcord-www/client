@@ -14,13 +14,13 @@ import {
   MessageSquareDashed,
   Pencil,
   Reply,
-  Trash,
   User2,
 } from "lucide-react";
 import type { Session } from "next-auth";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { api } from "@/trpc/react";
+import { DeleteMessageButton } from "@/components/pages/chat/actions/delete-message-button";
 import Twemoji from "react-twemoji";
 
 type MessageProps = {
@@ -139,7 +139,7 @@ export const Message = ({
           </div>
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent>
+      <ContextMenuContent forceMount>
         <ContextMenuItem>
           <div className="flex justify-between items-center w-full gap-3">
             <div className="text-xs">{t("reply")}</div>
@@ -167,12 +167,13 @@ export const Message = ({
           </div>
         </ContextMenuItem>
         {session?.user?.id === userId && (
-          <ContextMenuItem danger>
-            <div className="flex justify-between items-center w-full gap-3">
-              <div className="text-xs">{t("delete-message")}</div>
-              <Trash size={15} />
-            </div>
-          </ContextMenuItem>
+          <DeleteMessageButton
+            messageId={id}
+            username={username}
+            avatar={avatar}
+            content={message}
+            createdAt={createdAt}
+          />
         )}
         <ContextMenuSeparator />
         <ContextMenuItem onClick={() => navigator.clipboard.writeText(id)}>
