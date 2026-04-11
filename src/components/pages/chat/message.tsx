@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { api } from "@/trpc/react";
 import { DeleteMessageButton } from "@/components/pages/chat/actions/delete-message-button";
+import { getMediaType } from "@/components/pages/chat/utils/get-media-type";
 import Twemoji from "react-twemoji";
 
 type MessageProps = {
@@ -50,6 +51,7 @@ export const Message = ({
   const t = useTranslations("channel.message");
   const [editedMessage, setEditedMessage] = useState<string>(message);
   const utils = api.useUtils?.();
+  const mediaType = getMediaType(message);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -122,18 +124,43 @@ export const Message = ({
                   </div>
                 </div>
               ) : (
+                <div className="mt-1">
+                  {mediaType === "image" && (
+                    <a href={message} target="_blank" rel="noreferrer noopener">
+                      <img
+                        src={message}
+                        alt="uploaded media"
+                        className="max-h-72 max-w-md rounded-md object-cover"
+                      />
+                    </a>
+                  )}
+                  {mediaType === "video" && (
+                    <video
+                      src={message}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="max-h-72 max-w-md rounded-md"
+                    />
+                  )}
+                  {mediaType === "text" && (
                 <Twemoji
                   options={{
                     base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
                   }}
                 >
-                  <div className="flex gap-1 mt-1 [&>img]:size-5 items-center">
+                  <div className="flex items-center gap-1 [&_p>img]:size-5">
                   <p className="text-sm">
                     {message}
                   </p>
-                  <p>{editedAt && (<span className="text-xs text-gray-500">(edited)</span>)}</p>
+                  {editedAt && (<span className="text-xs text-gray-500">(edited)</span>)}
                   </div>
                 </Twemoji>
+                  )}
+                  {mediaType !== "text" && editedAt && (
+                    <p className="mt-1 text-xs text-gray-500">(edited)</p>
+                  )}
+                </div>
               )}
             </div>
           </div>

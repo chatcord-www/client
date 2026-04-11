@@ -23,6 +23,12 @@
     "welcome": "Welcome to #{channel}",
     "description": "This is the start of #{channel} channel",
     "textarea-placeholder": "Message #{channel}",
+    "upload": {
+      "button": "Upload image or video",
+      "uploading": "Uploading...",
+      "invalid-type": "Only image and video files are allowed",
+      "failed": "Upload failed. Please try again."
+    },
     "no-messages": "No messages yet. Start the conversation!",
     "message": {
       "edit": "Edit Text",

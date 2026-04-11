@@ -2,6 +2,8 @@
 
 import { useOutSideClick } from "@/hooks/outside-click";
 import { socket } from "@/lib/socket";
+import { UploadMediaButton } from "@/components/pages/chat/actions/upload-media-button";
+import { type SocketMessage } from "@/components/pages/chat/types/socket-message";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmojiPicker, { EmojiStyle, type Theme } from "emoji-picker-react";
@@ -33,6 +35,7 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const t = useTranslations("channel");
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState(false);
   const emojiRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   useOutSideClick(emojiRef, () => setShowEmojis(false));
@@ -47,6 +50,10 @@ export const ChatInput = ({
     },
   });
 
+  const emitNewMessage = (message: SocketMessage) => {
+    socket.emit("receive_message", serverId, channelId, message);
+  };
+
   const onSubmit = ({ text }: TextareaFormType) => {
     if (!text || !text.trim()) return;
     sendMessage(
@@ -54,7 +61,7 @@ export const ChatInput = ({
       {
         onSuccess: (message) => {
           setValue("text", "");
-          socket.emit("receive_message", serverId, channelId, message);
+          emitNewMessage(message);
         },
       },
     );
@@ -78,6 +85,12 @@ export const ChatInput = ({
         </div>
       )}
       <div className="relative">
+        <UploadMediaButton
+          channelId={channelId}
+          serverId={serverId}
+          onUploaded={emitNewMessage}
+          onUploadingChange={setIsUploading}
+        />
         <img
           onClick={() => setShowEmojis(true)}
           src="/assets/emoji.png"
@@ -90,6 +103,8 @@ export const ChatInput = ({
             render={({ field }) => (
               <Input
                 {...field}
+                disabled={isUploading}
+                className="pl-10"
                 placeholder={t("textarea-placeholder", {
                   channel: channelName,
                 })}
@@ -98,6 +113,9 @@ export const ChatInput = ({
           />
         </form>
       </div>
+      {isUploading && (
+        <p className="mt-1 text-xs text-zinc-400">{t("upload.uploading")}</p>
+      )}
     </>
   );
 };
