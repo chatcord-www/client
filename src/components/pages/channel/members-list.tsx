@@ -1,8 +1,13 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Member,
+  MemberProfileDialog,
+} from "@/components/pages/channel/member-profile-dialog";
 import { api } from "@/trpc/react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 type MembersListProps = {
   serverId: string;
@@ -65,20 +70,16 @@ export const MembersList = ({ serverId }: MembersListProps) => {
   );
 };
 
-type Member = {
-  id: string;
-  name: string | null;
-  image: string | null;
-  activity: "ONLINE" | "IDLE" | "DND" | "OFFLINE" | null;
-  discriminator: string | null;
-};
-
 const MemberItem = ({ member }: { member: Member }) => {
+  const [open, setOpen] = useState(false);
   const isOffline = member.activity === "OFFLINE";
 
   return (
-    <div
-      className={`flex items-center gap-2 rounded px-2 py-1.5 hover:bg-white/5 cursor-pointer ${isOffline ? "opacity-50" : ""}`}
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-white/5 ${isOffline ? "opacity-50" : ""}`}
     >
       <div className="relative">
         <Avatar className="size-8">
@@ -92,6 +93,13 @@ const MemberItem = ({ member }: { member: Member }) => {
         />
       </div>
       <span className="text-sm text-zinc-300 truncate">{member.name}</span>
-    </div>
+      </button>
+
+      <MemberProfileDialog
+        member={member}
+        open={open}
+        onOpenChange={setOpen}
+      />
+    </>
   );
 };

@@ -21,6 +21,11 @@ export const activityEnum = pgEnum("activity", [
   "DND",
   "OFFLINE",
 ]);
+export const friendRequestStatusEnum = pgEnum("friend_request_status", [
+  "PENDING",
+  "ACCEPTED",
+  "DECLINED",
+]);
 export const channelType = pgEnum("channel_type", ["VOICE", "TEXT"]);
 
 export const users = createTable(
@@ -148,6 +153,56 @@ export const usersToServers = createTable("users_to_servers", {
     .notNull()
     .references(() => servers.id),
 });
+
+export const friendRequests = createTable(
+  "friend_request",
+  {
+    id: varchar("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    senderId: varchar("sender_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    receiverId: varchar("receiver_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    status: friendRequestStatusEnum("status").notNull().default("PENDING"),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    senderReceiverUnique: uniqueIndex("friend_request_sender_receiver_unique").on(
+      table.senderId,
+      table.receiverId,
+    ),
+  }),
+);
+
+export const friendships = createTable(
+  "friendship",
+  {
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    friendId: varchar("friend_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.friendId] }),
+  }),
+);
 
 export const usersToServersRelations = relations(usersToServers, ({ one }) => ({
   user: one(users, {
