@@ -8,6 +8,7 @@ export type DirectsTab = "online" | "all" | "pending";
 export const useRequestPanel = () => {
   const [tab, setTab] = useState<DirectsTab>("all");
   const [query, setQuery] = useState("");
+  const [showAddFriend, setShowAddFriend] = useState(false);
   const utils = api.useUtils();
 
   const { data: friends = [], isLoading: friendsLoading } =
@@ -115,6 +116,8 @@ export const useRequestPanel = () => {
   return {
     tab,
     setTab,
+    showAddFriend,
+    setShowAddFriend,
     query,
     setQuery,
     incomingCount,

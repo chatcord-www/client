@@ -8,7 +8,113 @@ const targetSchema = z.object({
   targetUserId: z.string().min(1),
 });
 
+const friendTagSchema = z.object({
+  tag: z.string().trim().min(3).max(64),
+});
+
 export const friendRouter = createTRPCRouter({
+  sendFriendRequestByTag: protectedProcedure
+    .input(friendTagSchema)
+    .mutation(async ({ input, ctx }) => {
+      const currentUserId = ctx.session.user.id;
+      const match = /^(.+)#(\d{4})$/.exec(input.tag);
+
+      if (!match) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Use the format username#1234",
+        });
+      }
+
+      const name = match[1]?.trim();
+      const discriminator = match[2];
+
+      if (!name || !discriminator) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Use the format username#1234",
+        });
+      }
+
+      const targetUser = await ctx.db.query.users.findFirst({
+        columns: { id: true },
+        where: and(
+          eq(users.name, name),
+          eq(users.discriminator, discriminator),
+        ),
+      });
+
+      if (!targetUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      if (targetUser.id === currentUserId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot send a friend request to yourself",
+        });
+      }
+
+      const friendship = await ctx.db.query.friendships.findFirst({
+        where: and(
+          eq(friendships.userId, currentUserId),
+          eq(friendships.friendId, targetUser.id),
+        ),
+      });
+
+      if (friendship) {
+        return { status: "FRIEND" as const };
+      }
+
+      const incoming = await ctx.db.query.friendRequests.findFirst({
+        where: and(
+          eq(friendRequests.senderId, targetUser.id),
+          eq(friendRequests.receiverId, currentUserId),
+          eq(friendRequests.status, "PENDING"),
+        ),
+      });
+
+      if (incoming) {
+        await ctx.db.transaction(async (tx) => {
+          await tx
+            .update(friendRequests)
+            .set({ status: "ACCEPTED", updatedAt: new Date() })
+            .where(eq(friendRequests.id, incoming.id));
+
+          await tx
+            .insert(friendships)
+            .values([
+              { userId: currentUserId, friendId: targetUser.id },
+              { userId: targetUser.id, friendId: currentUserId },
+            ])
+            .onConflictDoNothing();
+        });
+
+        return { status: "FRIEND" as const };
+      }
+
+      await ctx.db
+        .insert(friendRequests)
+        .values({
+          senderId: currentUserId,
+          receiverId: targetUser.id,
+          status: "PENDING",
+          updatedAt: new Date(),
+        })
+        .onConflictDoUpdate({
+          target: [friendRequests.senderId, friendRequests.receiverId],
+          set: {
+            status: "PENDING",
+            updatedAt: new Date(),
+          },
+        });
+
+      return { status: "OUTGOING_REQUEST" as const };
+    }),
+
   listFriends: protectedProcedure.query(async ({ ctx }) => {
     const currentUserId = ctx.session.user.id;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { AddFriendPanel } from "@/components/pages/directs/add-friend-panel";
 import { FriendsTab } from "@/components/pages/directs/friends-tab";
 import { PendingTab } from "./pending-tab";
 import { useRequestPanel } from "@/components/pages/directs/UseRequestPanel";
@@ -15,6 +16,8 @@ export const RequestsPanel = () => {
   const {
     tab,
     setTab,
+    showAddFriend,
+    setShowAddFriend,
     query,
     setQuery,
     pendingCount,
@@ -68,11 +71,19 @@ export const RequestsPanel = () => {
           <Button
             type="button"
             size="sm"
-            className="ml-auto h-7 bg-indigo-500 px-3 text-white hover:bg-indigo-400"
+            className="ml-auto h-7 px-3"
+            variant={showAddFriend ? "default" : "ghost"}
+            onClick={() => setShowAddFriend((current) => !current)}
           >
             Add Friend
           </Button>
         </div>
+
+        {showAddFriend && (
+          <AddFriendPanel
+            onSuccess={() => setTab("pending")}
+          />
+        )}
 
         <div className="px-4 py-3">
             <div className="mb-3 flex items-center justify-end gap-3">
