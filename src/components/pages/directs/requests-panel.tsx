@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { FriendsTab } from "@/components/pages/directs/friends-tab";
-import { IncomingRequestsTab } from "@/components/pages/directs/incoming-requests-tab";
-import { OutgoingRequestsTab } from "@/components/pages/directs/outgoing-requests-tab";
+import { PendingTab } from "./pending-tab";
 import { useRequestPanel } from "@/components/pages/directs/UseRequestPanel";
 import { Search } from "lucide-react";
 import type {
@@ -18,8 +17,6 @@ export const RequestsPanel = () => {
     setTab,
     query,
     setQuery,
-    incomingCount,
-    outgoingCount,
     pendingCount,
     filteredFriends,
     filteredIncoming,
@@ -57,24 +54,17 @@ export const RequestsPanel = () => {
           >
             All
           </Button>
+          {pendingCount > 0 && (
           <Button
             type="button"
             size="sm"
-            variant={tab === "incoming" ? "default" : "ghost"}
-            onClick={() => setTab("incoming")}
+            variant={tab === "pending" ? "default" : "ghost"}
+            onClick={() => setTab("pending")}
             className="h-7 px-3"
           >
-            Incoming ({incomingCount})
+              Pending ({pendingCount})
           </Button>
-          <Button
-            type="button"
-            size="sm"
-            variant={tab === "outgoing" ? "default" : "ghost"}
-            onClick={() => setTab("outgoing")}
-            className="h-7 px-3"
-          >
-            Outgoing ({outgoingCount})
-          </Button>
+          )}
           <Button
             type="button"
             size="sm"
@@ -85,10 +75,7 @@ export const RequestsPanel = () => {
         </div>
 
         <div className="px-4 py-3">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="text-sm text-zinc-400">
-                Pending requests: <span className="font-semibold text-zinc-200">{pendingCount}</span>
-              </div>
+            <div className="mb-3 flex items-center justify-end gap-3">
               <div className="relative w-full max-w-[420px]">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
                 <input
@@ -100,13 +87,11 @@ export const RequestsPanel = () => {
               </div>
             </div>
 
+            {(tab === "online" || tab === "all") && (
             <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              {tab === "incoming"
-                ? `Incoming - ${incomingCount}`
-                : tab === "outgoing"
-                  ? `Outgoing - ${outgoingCount}`
-                  : `${friendsLabel} - ${friendsCount}`}
+                {friendsLabel} — {friendsCount}
             </div>
+            )}
 
             {loading && (
               <div className="rounded-lg border border-white/10 bg-[#11131a] p-4 text-sm text-zinc-400">
@@ -115,29 +100,21 @@ export const RequestsPanel = () => {
             )}
 
         
-            {!loading && (tab === "all" || tab === "online") && filteredFriends.length === 0 && (
-              <div className="rounded-lg border border-white/10 bg-[#11131a] p-8 text-center text-sm text-zinc-500">
-                {tab === "online"
-                  ? "No friends are online right now."
-                  : "No friends found yet."}
-              </div>
-            )}
-
-            {!loading && tab === "incoming" && filteredIncoming.length > 0 && (
-              <IncomingRequestsTab
-                items={filteredIncoming as IncomingRequestItem[]}
+            {!loading && tab === "pending" && (
+              <PendingTab
+                incoming={filteredIncoming as IncomingRequestItem[]}
+                outgoing={filteredOutgoing as OutgoingRequestItem[]}
                 isBusy={isBusy}
                 onAccept={onAccept}
                 onDecline={onDecline}
+                onCancel={onCancel}
               />
             )}
 
-            {!loading && tab === "outgoing" && filteredOutgoing.length > 0 && (
-              <OutgoingRequestsTab
-                items={filteredOutgoing as OutgoingRequestItem[]}
-                isBusy={isBusy}
-                onCancel={onCancel}
-              />
+            {!loading && (tab === "online" || tab === "all") && filteredFriends.length === 0 && (
+              <div className="rounded-lg border border-white/10 bg-[#11131a] p-8 text-center text-sm text-zinc-500">
+                {tab === "online" ? "No friends are online right now." : "No friends found yet."}
+              </div>
             )}
 
             {!loading && (tab === "online" || tab === "all") && filteredFriends.length > 0 && (

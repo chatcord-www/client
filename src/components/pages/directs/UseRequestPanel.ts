@@ -1,9 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-export type DirectsTab = "online" | "all" | "incoming" | "outgoing";
+export type DirectsTab = "online" | "all" | "pending";
 
 export const useRequestPanel = () => {
   const [tab, setTab] = useState<DirectsTab>("all");
@@ -46,6 +46,12 @@ export const useRequestPanel = () => {
   const incomingCount = incoming.length;
   const outgoingCount = outgoing.length;
   const pendingCount = incomingCount + outgoingCount;
+
+  useEffect(() => {
+    if (tab === "pending" && pendingCount === 0) {
+      setTab("all");
+    }
+  }, [pendingCount, tab]);
 
   const onlineFriends = friends.filter((friend) => friend.activity !== "OFFLINE");
   const friendSource = tab === "online" ? onlineFriends : friends;
@@ -93,10 +99,8 @@ export const useRequestPanel = () => {
   }, [outgoing, normalizedQuery]);
 
   const loading =
-    tab === "incoming"
-      ? incomingLoading
-      : tab === "outgoing"
-        ? outgoingLoading
+    tab === "pending"
+      ? incomingLoading || outgoingLoading
         : friendsLoading;
 
   const isBusy =
