@@ -70,6 +70,8 @@ export const authOptions: NextAuthOptions = {
       const profilePreferences = await db.query.users.findFirst({
         columns: {
           id: true,
+          name: true,
+          image: true,
           status: true,
           activity: true,
           aboutMe: true,
@@ -84,11 +86,13 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: token.sub,
+          name: profilePreferences?.name,
+          image: profilePreferences?.image,
           activity: profilePreferences?.activity,
           status: profilePreferences?.status,
           aboutMe: profilePreferences?.aboutMe,
           createdAt: profilePreferences?.createdAt,
-          discrimantor: profilePreferences?.discriminator,
+          discriminator: profilePreferences?.discriminator,
         },
         cookies: token.cookies,
       };

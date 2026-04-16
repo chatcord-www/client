@@ -2,6 +2,7 @@ import { env } from "@/env";
 import { publicProcedure } from "@/server/api/trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { isAuthorized } from "../middleware/is-auth";
 
@@ -15,6 +16,8 @@ const s3 = new S3Client({
 
 const allowedMimeTypes = ["image/", "video/"];
 const maxFileSize = 50 * 1024 * 1024;
+const allowedAvatarTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const maxAvatarSize = 50 * 1024 * 1024;
 
 const sanitizeFileName = (value: string) =>
   value
@@ -29,25 +32,63 @@ export const generateSignedUrl = publicProcedure
       fileName: z.string().min(1),
       contentType: z.string().min(1),
       fileSize: z.number().int().positive(),
-      channelId: z.string(),
-      serverId: z.string(),
+      channelId: z.string().optional(),
+      serverId: z.string().optional(),
+      uploadType: z.enum(["chat", "avatar"]).default("chat"),
     }),
   )
   .mutation(async ({ input, ctx }) => {
+    const isAvatarUpload = input.uploadType === "avatar";
+
+    if (isAvatarUpload) {
+      if (!allowedAvatarTypes.includes(input.contentType)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only JPEG, PNG, WebP, or GIF images are allowed.",
+        });
+      }
+
+      if (input.fileSize > maxAvatarSize) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Avatar must be 50 MB or smaller.",
+        });
+      }
+    } else {
     const isAllowedType = allowedMimeTypes.some((type) =>
       input.contentType.startsWith(type),
     );
 
     if (!isAllowedType) {
-      throw new Error("Unsupported file type. Only image/video files are allowed.");
+      throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unsupported file type. Only image/video files are allowed.",
+        });
     }
 
     if (input.fileSize > maxFileSize) {
-      throw new Error("File is too large. Max allowed size is 50MB.");
+      throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "File is too large. Max allowed size is 50MB.",
+        });
+      }
+
+      if (!input.serverId || !input.channelId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "serverId and channelId are required for chat uploads.",
+        });
+      }
     }
 
     const safeName = sanitizeFileName(input.fileName);
-    const key = [
+    const key = isAvatarUpload
+      ? [
+          "avatars",
+          ctx.session?.user.id,
+          `${Date.now()}-${crypto.randomUUID()}-${safeName}`,
+        ].join("/")
+      : [
       "uploads",
       input.serverId,
       input.channelId,
@@ -71,6 +112,6 @@ export const generateSignedUrl = publicProcedure
       uploadUrl,
       fileUrl: `${publicBaseUrl}/${key}`,
       key,
-      maxFileSize,
+      maxFileSize: isAvatarUpload ? maxAvatarSize : maxFileSize,
     };
   });
