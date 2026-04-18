@@ -12,6 +12,12 @@ export const Profile = ({ user }: Session) => {
     <>
       <div className="relative overflow-hidden rounded-md pb-12">
         <div className="h-16 w-full bg-purple-400" />
+        {user.bannerColor && (
+          <div
+            className="absolute left-0 top-0 h-16 w-full"
+            style={{ backgroundColor: user.bannerColor }}
+          />
+        )}
         <img
           src={user.image!}
           className="absolute left-3 top-5 size-[90px] rounded-full border-[6px] border-popover"

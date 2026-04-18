@@ -59,6 +59,7 @@ export const serverRouter = createTRPCRouter({
               image: true,
               activity: true,
               discriminator: true,
+              bannerColor: true,
             },
           },
         },

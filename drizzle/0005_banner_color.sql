@@ -1,0 +1,1 @@
+ALTER TABLE "client_user" ADD COLUMN IF NOT EXISTS "banner_color" varchar(7);

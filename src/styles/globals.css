@@ -64,4 +64,37 @@
   .debug {
     @apply border border-red-500;
   }
+
+  .banner-color-picker {
+    width: 100% !important;
+  }
+
+  .banner-color-picker .react-colorful__saturation {
+    height: 180px;
+    border-radius: 6px;
+    border: 1px solid #383c48;
+  }
+
+  .banner-color-picker .react-colorful__hue {
+    margin-top: 10px;
+    height: 12px;
+    border-radius: 9999px;
+  }
+
+  .banner-color-picker .react-colorful__hue-pointer {
+    width: 10px;
+    height: 24px;
+    border-radius: 6px;
+    border: none;
+    background: #f2f4f7;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .banner-color-picker .react-colorful__pointer {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+    border-color: #eef0f6;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+  }
 }

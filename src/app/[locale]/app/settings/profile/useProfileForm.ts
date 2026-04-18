@@ -35,6 +35,7 @@ export const useProfileForm = () => {
     values: {
       name: session?.user.name ?? "",
       aboutMe: session?.user.aboutMe ?? "",
+      bannerColor: session?.user.bannerColor ?? "#f472b6",
     },
   });
 
@@ -84,6 +85,7 @@ export const useProfileForm = () => {
       await updateProfile.mutateAsync({
         name: data.name,
         aboutMe: data.aboutMe,
+        bannerColor: data.bannerColor,
         image,
       });
 

@@ -45,6 +45,7 @@ export const users = createTable(
     discriminator: varchar("discriminator", { length: 4 }),
     activity: activityEnum("activity").default("ONLINE"),
     aboutMe: varchar("about_me", { length: 255 }),
+    bannerColor: varchar("banner_color", { length: 7 }),
     password: varchar("password", { length: 255 }),
     status: json("status").$type<{ emoji: string; title: string }>(),
     createdAt: timestamp("createdAt", {

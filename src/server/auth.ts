@@ -31,6 +31,7 @@ declare module "next-auth" {
       activity: USER_STATUS_ENUM;
       status: { emoji: string; title: string };
       aboutMe: string;
+      bannerColor: string;
       createdAt: Date;
     } & DefaultSession["user"];
     cookies: string;
@@ -75,6 +76,7 @@ export const authOptions: NextAuthOptions = {
           status: true,
           activity: true,
           aboutMe: true,
+          bannerColor: true,
           createdAt: true,
           discriminator: true,
         },
@@ -91,6 +93,7 @@ export const authOptions: NextAuthOptions = {
           activity: profilePreferences?.activity,
           status: profilePreferences?.status,
           aboutMe: profilePreferences?.aboutMe,
+          bannerColor: profilePreferences?.bannerColor,
           createdAt: profilePreferences?.createdAt,
           discriminator: profilePreferences?.discriminator,
         },

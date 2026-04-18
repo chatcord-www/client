@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Controller } from "react-hook-form";
+import { BannerColorPicker } from "./banner-color-picker/banner-color-picker";
 import { useProfileForm } from "./useProfileForm";
 
 export function ProfileForm() {
@@ -101,12 +102,7 @@ export function ProfileForm() {
             </p>
           )}
         </div>
-        <div>
-          <Label className="text-xs uppercase">Banner color</Label>
-          <div>
-            <div className="h-10 w-16 rounded-sm bg-pink-400" />
-          </div>
-        </div>
+        <BannerColorPicker control={control} />
         <div className="flex items-center gap-3">
           <Button size="lg" type="submit" disabled={isPending || isUploading}>
             {isUploading ? "Uploading avatar..." : isPending ? "Saving..." : "Save"}

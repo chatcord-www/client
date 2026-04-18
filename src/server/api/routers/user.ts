@@ -27,10 +27,14 @@ export const userRouter = createTRPCRouter({
           name: z.string().trim().min(1).max(255).optional(),
           aboutMe: z.string().trim().max(255).optional(),
           image: z.string().url().optional(),
+          bannerColor: z
+            .string()
+            .regex(/^#[0-9a-fA-F]{6}$/)
+            .optional(),
         })
         .refine(
-          ({ name, aboutMe, image }) =>
-            name !== undefined || aboutMe !== undefined || image !== undefined,
+          ({ name, aboutMe, image, bannerColor }) =>
+            name !== undefined || aboutMe !== undefined || image !== undefined || bannerColor !== undefined,
           {
             message: "at-least-one-field",
           },
@@ -43,6 +47,7 @@ export const userRouter = createTRPCRouter({
           discriminator: true,
           aboutMe: true,
           image: true,
+          bannerColor: true,
         },
         where: eq(users.id, ctx.session.user.id),
       }); 
@@ -55,11 +60,13 @@ export const userRouter = createTRPCRouter({
         name?: string;
         aboutMe?: string | null;
         image?: string | null;
+        bannerColor?: string | null;
         discriminator?: string | null;
       } = {
         name: input.name,
         aboutMe: input.aboutMe,
         image: input.image,
+        bannerColor: input.bannerColor,
       };
 
       if (input.name !== undefined) {
@@ -75,6 +82,10 @@ export const userRouter = createTRPCRouter({
 
       if (input.image !== undefined) {
         updateData.image = input.image;
+      }
+
+      if (input.bannerColor !== undefined) {
+        updateData.bannerColor = input.bannerColor;
       }
       await ctx.db
         .update(users)

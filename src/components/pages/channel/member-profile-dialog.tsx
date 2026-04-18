@@ -29,6 +29,7 @@ export type Member = {
   image: string | null;
   activity: "ONLINE" | "IDLE" | "DND" | "OFFLINE" | null;
   discriminator: string | null;
+  bannerColor: string | null;
 };
 
 const activityColors: Record<string, string> = {
@@ -97,9 +98,9 @@ export const MemberProfileDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="overflow-hidden border-zinc-800 bg-zinc-900 p-0 text-zinc-100 shadow-2xl [&>button]:hidden sm:max-w-[38rem]">
-
-
-        <div className="relative h-48 overflow-hidden bg-[#3b342c]">
+        <div className="relative h-48 overflow-hidden bg-purple-400"
+          style={{ backgroundColor: member.bannerColor ?? "#a855f7" }}
+        >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(0,0,0,0))]" />
 
           <TooltipProvider delayDuration={120}>
