@@ -15,6 +15,7 @@ export const useProfileForm = () => {
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState(session?.user.image ?? "");
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
     if (!pendingAvatarFile) {
@@ -100,16 +101,31 @@ export const useProfileForm = () => {
     }
   };
 
-  const openFilePicker = () => {
-    fileInputRef.current?.click();
-  };
-
   const onPickFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setAvatarError(null);
-    setPendingAvatarFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setCropImageSrc(objectUrl);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const onCropApply = (croppedFile: File) => {
+    if (cropImageSrc) {
+      URL.revokeObjectURL(cropImageSrc);
+    }
+    setCropImageSrc(null);
+    setPendingAvatarFile(croppedFile);
+  };
+
+  const onCropCancel = () => {
+    if (cropImageSrc) {
+      URL.revokeObjectURL(cropImageSrc);
+    }
+    setCropImageSrc(null);
   };
 
   return {
@@ -117,8 +133,10 @@ export const useProfileForm = () => {
     control,
     submitHandler,
     fileInputRef,
-    openFilePicker,
     onPickFile,
+    onCropApply,
+    onCropCancel,
+    cropImageSrc,
     isPending: updateProfile.isPending,
     isUploading,
     hasPendingAvatar: Boolean(pendingAvatarFile),
