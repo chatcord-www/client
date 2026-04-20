@@ -120,6 +120,7 @@ export const useRequestPanel = () => {
     setShowAddFriend,
     query,
     setQuery,
+    friends,
     incomingCount,
     outgoingCount,
     pendingCount,

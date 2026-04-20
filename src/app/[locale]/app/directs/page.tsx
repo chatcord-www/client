@@ -1,4 +1,4 @@
-import { RequestsPanel } from "@/components/pages/directs/requests-panel";
+import { RequestsPanel } from "./_components/requests-panel";
 
 export const metadata = {
   title: "Chat • Directs",

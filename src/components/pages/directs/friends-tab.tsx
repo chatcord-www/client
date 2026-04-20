@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { MessageCircle, Minus, MoreVertical } from "lucide-react";
+import { Link } from "@/navigation";
 import { FriendItem, getActivityColor, getActivityLabel } from "./types";
 
 type FriendsTabProps = {
@@ -21,8 +22,9 @@ export const FriendsTab = ({
     <div className="space-y-1">
       {items.map((friend) => {
         return (
-          <div
+          <Link
             key={friend.id}
+            href={`/app/directs/${friend.id}`}
             className="flex items-center justify-between rounded-md border border-transparent px-2 py-2 hover:border-white/10 hover:bg-white/[0.03]"
           >
             <div className="flex min-w-0 items-center gap-3">
@@ -80,7 +82,7 @@ export const FriendsTab = ({
                 <MoreVertical className="size-4" />
               </Button>
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>
