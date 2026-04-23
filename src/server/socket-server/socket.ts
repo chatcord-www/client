@@ -29,6 +29,18 @@ export const initializeSocket = (server: HttpServer) => {
       );
     });
 
+    socket.on("connect_direct", (userId, friendId) => {
+      socket.join(`${userId}:${friendId}`);
+      console.log(`User ${socket.id} joined direct room ${userId}:${friendId}`);
+    });
+
+    socket.on("receive_direct_message", (userId, friendId, message) => {
+      io.to(`${userId}:${friendId}`).emit("direct_message_polling", message);
+      console.log(
+        `Direct message sent in ${userId}:${friendId}: ${JSON.stringify(message)}`
+      );
+    });
+
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.id}`);
     });

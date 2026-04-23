@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   integer,
   json,
@@ -27,6 +28,7 @@ export const friendRequestStatusEnum = pgEnum("friend_request_status", [
   "DECLINED",
 ]);
 export const channelType = pgEnum("channel_type", ["VOICE", "TEXT"]);
+export const messageMode = pgEnum("message_mode", ["CHANNEL", "DIRECT"]);
 
 export const users = createTable(
   "user",
@@ -107,9 +109,13 @@ export const messages = createTable("message", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   content: varchar("content", { length: 1024 }).notNull(),
-  userId: varchar("userId").references(() => users.id),
+  mode: messageMode("mode").notNull(),
+  userId: varchar("userId").notNull().references(() => users.id),
   serverId: varchar("serverId").references(() => servers.id),
   channelId: varchar("channelId").references(() => channels.id),
+  friendId: varchar("friendId", { length: 255 }).references(
+    () => users.id,
+  ),
   createdAt: timestamp("createdAt", {
     mode: "date",
     withTimezone: true,
@@ -118,11 +124,42 @@ export const messages = createTable("message", {
     mode: "date",
     withTimezone: true,
   }),
-});
+  },
+  (_table) => ({
+    messageModeConsistency: check(
+      "client_message_mode_consistency_check",
+      sql`(
+        (
+          "mode" = 'DIRECT'::"message_mode"
+          AND "ownerId" IS NOT NULL
+          AND "friendId" IS NOT NULL
+          AND "serverId" IS NULL
+          AND "channelId" IS NULL
+        )
+        OR
+        (
+          "mode" = 'CHANNEL'::"message_mode"
+          AND "serverId" IS NOT NULL
+          AND "channelId" IS NOT NULL
+          AND "ownerId" IS NULL
+          AND "friendId" IS NULL
+        )
+      )`,
+    ),
+    directNotSelf: check(
+      "client_message_direct_not_self_check",
+      sql`"mode" <> 'DIRECT'::"message_mode" OR "ownerId" <> "friendId"`,
+    ),
+  }),
+);
 
 export const messagesRelations = relations(messages, ({ one }) => ({
   users: one(users, {
     fields: [messages.userId],
+    references: [users.id],
+  }),
+  friend: one(users, {
+    fields: [messages.friendId],
     references: [users.id],
   }),
   channels: one(channels, {

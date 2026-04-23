@@ -41,5 +41,5 @@ export default async function DirectFriendPage(props: {
 
   const friendInfo = friend[0]!;
 
-  return <DirectMessageView friend={friendInfo} />;
+  return <DirectMessageView currentUserId={resolvedUserId} friend={friendInfo} />;
 }

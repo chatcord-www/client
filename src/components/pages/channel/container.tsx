@@ -8,31 +8,36 @@ import { useEffect, useRef } from "react";
 import { Message } from "../chat/message";
 
 type ChannelContainerProps = {
-  serverId: string;
-  channelId: string;
+  serverId?: string;
+  channelId?: string;
+  currentUserId?: string;
+  friendId?: string;
 };
 
 export const ChannelContainer = ({
   channelId,
   serverId,
+  currentUserId,
+  friendId
 }: ChannelContainerProps) => {
   const { data: session } = useSession();
   const t = useTranslations("channel");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { data: apiMessages, isLoading } = api.getMessages.useQuery({
+  const { data: apiMessages, isLoading } = api.getMessages.useQuery({ 
     channelId,
     serverId,
+    friendId
   });
   const { messages, loading, loadMessages, setLoading, clearMessages } = useChatMessages();
   const editMessageMutation = api.editMessage.useMutation();
 
   const handleEditMessage = async ({ messageId, newContent }: { messageId: string; newContent: string }) => {
-    return editMessageMutation.mutateAsync({ messageId, newContent });
+    await editMessageMutation.mutateAsync({ messageId, newContent });
   };
 
   useEffect(() => {
     clearMessages();
-  }, [channelId, serverId]);
+  }, [channelId, serverId, currentUserId, friendId]);
 
   useEffect(() => {
     if (apiMessages?.length) {

@@ -34,6 +34,7 @@ export const generateSignedUrl = publicProcedure
       fileSize: z.number().int().positive(),
       channelId: z.string().optional(),
       serverId: z.string().optional(),
+      friendId: z.string().optional(),
       uploadType: z.enum(["chat", "avatar"]).default("chat"),
     }),
   )
@@ -73,10 +74,18 @@ export const generateSignedUrl = publicProcedure
         });
       }
 
-      if (!input.serverId || !input.channelId) {
+      if (!input.friendId && !(input.serverId && input.channelId)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "serverId and channelId are required for chat uploads.",
+          message: "Provide friendId for direct uploads, or serverId + channelId for channel uploads.",
+        });
+      }
+
+      if (input.friendId && (input.serverId || input.channelId)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Provide either friendId for direct uploads or serverId + channelId for channel uploads.",
         });
       }
     }
@@ -85,6 +94,14 @@ export const generateSignedUrl = publicProcedure
     const key = isAvatarUpload
       ? [
           "avatars",
+          ctx.session?.user.id,
+          `${Date.now()}-${crypto.randomUUID()}-${safeName}`,
+        ].join("/")
+      : input.friendId
+        ? [
+            "uploads",
+            "direct",
+            [ctx.session?.user.id, input.friendId].sort().join("_"),
           ctx.session?.user.id,
           `${Date.now()}-${crypto.randomUUID()}-${safeName}`,
         ].join("/")

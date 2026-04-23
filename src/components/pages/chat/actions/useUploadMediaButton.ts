@@ -4,8 +4,10 @@ import { useTranslations } from "next-intl";
 import { useRef } from "react";
 
 export type UploadMediaButtonProps = {
-  channelId: string;
-  serverId: string;
+  channelId?: string;
+  serverId?: string;
+  currentUserId?: string;
+  friendId?: string;
   onUploaded: (message: SocketMessage) => void;
   onUploadingChange: (isUploading: boolean) => void;
 };
@@ -13,6 +15,7 @@ export type UploadMediaButtonProps = {
 export const useUploadMediaButton = ({
   channelId,
   serverId,
+  friendId,
   onUploaded,
   onUploadingChange,
 }: UploadMediaButtonProps) => {
@@ -39,12 +42,18 @@ export const useUploadMediaButton = ({
 
     try {
       onUploadingChange(true);
+
+      if (!friendId && !(serverId && channelId)) {
+        throw new Error("Missing upload target");
+      }
+
       const { uploadUrl, fileUrl } = await createUploadUrl({
         fileName: file.name,
         contentType: file.type,
         fileSize: file.size,
         channelId,
         serverId,
+        friendId,
       });
 
       const uploadResult = await fetch(uploadUrl, {
@@ -63,6 +72,7 @@ export const useUploadMediaButton = ({
         channelId,
         serverId,
         text: fileUrl,
+        friendId
       });
 
       onUploaded(message);

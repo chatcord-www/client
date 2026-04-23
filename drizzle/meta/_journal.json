@@ -43,6 +43,48 @@
       "when": 1776540606433,
       "tag": "0005_wooden_ender_wiggin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1776697200000,
+      "tag": "0006_direct_messages",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1776705866293,
+      "tag": "0007_organic_silver_centurion",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1776708726193,
+      "tag": "0008_fast_joshua_kane",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1776943557000,
+      "tag": "0009_message_mode_constraints",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1776957785146,
+      "tag": "0010_remove_ownerId",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1776971041028,
+      "tag": "0011_glorious_ego",
+      "breakpoints": true
     }
   ]
 }

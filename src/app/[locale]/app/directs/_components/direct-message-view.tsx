@@ -2,20 +2,18 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ChatInput } from "@/components/ui/chat-input";
 import { Input } from "@/components/ui/input";
+import { MessagesProvider } from "@/components/providers/messages";
 import { cn } from "@/lib/utils";
 import { getActivityColor } from "@/components/pages/directs/types";
+import { ChannelContainer } from "@/components/pages/channel/container";
 import {
-  Gift,
-  ImageIcon,
   Phone,
-  Plus,
   Search,
-  Smile,
   UserPlus,
   Video,
 } from "lucide-react";
-import { useState } from "react";
 
 type DirectMessageFriend = {
   id: string;
@@ -26,12 +24,14 @@ type DirectMessageFriend = {
 };
 
 type DirectMessageViewProps = {
+  currentUserId: string;
   friend: DirectMessageFriend;
 };
 
-export const DirectMessageView = ({ friend }: DirectMessageViewProps) => {
-  const [draft, setDraft] = useState("");
-
+export const DirectMessageView = ({
+  currentUserId,
+  friend,
+}: DirectMessageViewProps) => {
   return (
     <section className="min-w-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-[#15171d] text-zinc-100">
       <div className="flex h-full flex-col">
@@ -79,56 +79,17 @@ export const DirectMessageView = ({ friend }: DirectMessageViewProps) => {
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex-1 overflow-y-auto px-6 py-6">
-            <div className="mx-auto flex max-w-3xl flex-col gap-6">
-              <div className="border-b border-white/10 pb-6">
-                <Avatar className="mb-4 size-20">
-                  <AvatarFallback className="text-2xl">
-                    {friend.name?.[0]?.toUpperCase() ?? "?"}
-                  </AvatarFallback>
-                  <AvatarImage src={friend.image ?? undefined} />
-                </Avatar>
-
-                <h1 className="text-4xl font-black tracking-tight text-white">
-                  {friend.name ?? "Unknown user"}
-                </h1>
-                <p className="mt-2 text-xl font-semibold text-zinc-300">
-                  {friend.name ?? "Unknown user"}
-                  {friend.discriminator ? `#${friend.discriminator}` : ""}
-                </p>
-                <p className="mt-4 text-sm text-zinc-400">
-                  This is the beginning of your direct message history with {friend.name ?? "turbostannnn"}.
-                </p>
-              </div>
-            </div>
-          </div>
+          <MessagesProvider currentUserId={currentUserId} friendId={friend.id}>
+            <ChannelContainer currentUserId={currentUserId} friendId={friend.id} />
 
           <div className="border-t border-white/10 px-4 py-4">
-            <form onSubmit={(event) => event.preventDefault()}>
-              <div className="flex items-center gap-2 rounded-xl bg-[#11131a] px-3 py-2">
-                <Button type="button" variant="ghost" size="icon" className="size-8 rounded-full text-zinc-400">
-                  <Plus className="size-4" />
-                </Button>
-
-                <Input
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  placeholder={`Message @${friend.name ?? "unknown"}`}
-                  className="h-10 border-0 bg-transparent px-0 text-sm text-zinc-100 shadow-none ring-0 placeholder:text-zinc-500 focus-visible:ring-0"
-                />
-
-                <Button type="button" variant="ghost" size="icon" className="size-8 rounded-full text-zinc-400">
-                  <Gift className="size-4" />
-                </Button>
-                <Button type="button" variant="ghost" size="icon" className="size-8 rounded-full text-zinc-400">
-                  <ImageIcon className="size-4" />
-                </Button>
-                <Button type="button" variant="ghost" size="icon" className="size-8 rounded-full text-zinc-400">
-                  <Smile className="size-4" />
-                </Button>
+              <ChatInput
+                currentUserId={currentUserId}
+                friendId={friend.id}
+                friendName={friend.name}
+              />
               </div>
-            </form>
-          </div>
+            </MessagesProvider>
         </div>
       </div>
     </section>

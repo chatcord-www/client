@@ -8,18 +8,21 @@ export const sendMessage = publicProcedure
   .input(
     z.object({
       text: z.string().max(1024),
-      channelId: z.string(),
-      serverId: z.string(),
-    }),
+      channelId: z.string().optional(),
+      serverId: z.string().optional(),
+      friendId: z.string().optional(),
+      })
   )
   .mutation(async ({ input, ctx }) => {
     const message = await ctx.db
       .insert(messages)
       .values({
         content: input.text,
+        mode: input.friendId ? "DIRECT" : "CHANNEL",
+        friendId: input.friendId,
         channelId: input.channelId,
         serverId: input.serverId,
-        userId: ctx.session?.user.id,
+        userId: ctx.session?.user.id as string,
       })
       .returning();
 
