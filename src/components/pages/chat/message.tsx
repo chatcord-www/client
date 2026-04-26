@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { api } from "@/trpc/react";
 import { DeleteMessageButton } from "@/components/pages/chat/actions/delete-message-button";
+import { MediaPreviewModal } from "@/components/pages/chat/modals/media-preview-modal";
 import { getMediaType } from "@/components/pages/chat/utils/get-media-type";
 import Twemoji from "react-twemoji";
 
@@ -48,6 +49,7 @@ export const Message = ({
   onEditMessage,
 }: MessageProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const t = useTranslations("channel.message");
   const [editedMessage, setEditedMessage] = useState<string>(message);
   const utils = api.useUtils?.();
@@ -126,22 +128,32 @@ export const Message = ({
               ) : (
                 <div className="mt-1">
                   {mediaType === "image" && (
-                    <a href={message} target="_blank" rel="noreferrer noopener">
+                    <button
+                      type="button"
+                      className="inline-block w-fit rounded-md"
+                      onClick={() => setPreviewOpen(true)}
+                    >
                       <img
                         src={message}
                         alt="uploaded media"
-                        className="max-h-72 max-w-md rounded-md object-cover"
+                        className="max-h-72 max-w-md cursor-pointer rounded-md object-cover"
                       />
-                    </a>
+                    </button>
                   )}
                   {mediaType === "video" && (
+                    <button
+                      type="button"
+                      className="relative inline-block w-fit overflow-hidden rounded-md"
+                      onClick={() => setPreviewOpen(true)}
+                    >
                     <video
                       src={message}
                       controls
                       playsInline
                       preload="metadata"
-                      className="max-h-72 max-w-md rounded-md"
+                      className="max-h-72 max-w-md cursor-pointer rounded-md object-cover"
                     />
+                    </button>
                   )}
                   {mediaType === "text" && (
                 <Twemoji
@@ -161,6 +173,15 @@ export const Message = ({
                     <p className="mt-1 text-xs text-gray-500">(edited)</p>
                   )}
                 </div>
+              )}
+
+              {(mediaType === "image" || mediaType === "video") && (
+                <MediaPreviewModal
+                  open={previewOpen}
+                  onOpenChange={setPreviewOpen}
+                  mediaType={mediaType}
+                  src={message}
+                />
               )}
             </div>
           </div>

@@ -33,7 +33,7 @@ export const DirectMessageView = ({
   friend,
 }: DirectMessageViewProps) => {
   return (
-    <section className="min-w-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-[#15171d] text-zinc-100">
+    <section className="min-w-0 flex-1 h-[calc(100vh-2.25rem)] overflow-hidden rounded-2xl border border-white/10 bg-[#15171d] text-zinc-100">
       <div className="flex h-full flex-col">
         <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
