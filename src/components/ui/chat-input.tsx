@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useOutSideClick } from "@/hooks/outside-click";
 import { socket } from "@/lib/socket";
 import { UploadMediaButton } from "@/components/pages/chat/actions/upload-media-button";
@@ -8,7 +7,6 @@ import { type SocketMessage } from "@/components/pages/chat/types/socket-message
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EmojiPicker, { EmojiStyle, type Theme } from "emoji-picker-react";
-import { Gift, ImageIcon, Smile } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useRef, useState } from "react";
@@ -39,7 +37,6 @@ export const ChatInput = ({
   serverId,
   currentUserId,
   friendId,
-  friendName,
 }: ChatInputProps) => {
   const t = useTranslations("channel");
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
@@ -92,62 +89,6 @@ export const ChatInput = ({
     );
   };
 
-  if (currentUserId && friendId) {
-    return (
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-center gap-2 rounded-xl bg-[#11131a] px-3 py-2">
-          <div className="relative size-8 shrink-0">
-            <UploadMediaButton
-              currentUserId={currentUserId}
-              friendId={friendId}
-              onUploaded={emitNewMessage}
-              onUploadingChange={setIsUploading}
-              className="left-0 top-0 flex size-8 items-center justify-center rounded-full text-zinc-400 hover:text-zinc-200"
-            />
-          </div>
-
-          <Controller
-            name="text"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                disabled={isPending || isUploading}
-                placeholder={`Message @${friendName ?? "unknown"}`}
-                className="h-10 border-0 bg-transparent px-0 text-sm text-zinc-100 shadow-none ring-0 placeholder:text-zinc-500 focus-visible:ring-0"
-              />
-            )}
-          />
-
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full text-zinc-400"
-          >
-            <Gift className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full text-zinc-400"
-          >
-            <ImageIcon className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full text-zinc-400"
-          >
-            <Smile className="size-4" />
-          </Button>
-        </div>
-      </form>
-    );
-  }
-
   return (
     <>
       {showEmojis && (
@@ -169,6 +110,8 @@ export const ChatInput = ({
         <UploadMediaButton
           channelId={channelId}
           serverId={serverId}
+          currentUserId={currentUserId}
+          friendId={friendId}
           onUploaded={emitNewMessage}
           onUploadingChange={setIsUploading}
         />
