@@ -44,9 +44,9 @@ export const ChatInput = ({
   const emojiRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   useOutSideClick(emojiRef, () => setShowEmojis(false));
-  const { mutate: sendMessage, isPending } = api.sendMessage.useMutation();
+  const { mutate: sendMessage } = api.sendMessage.useMutation();
 
-  const { control, setValue, getValues, handleSubmit } = useForm<
+  const { control, setValue, getValues, handleSubmit, setFocus } = useForm<
     z.infer<typeof TextareaFormSchema>
   >({
     resolver: zodResolver(TextareaFormSchema),
@@ -84,6 +84,7 @@ export const ChatInput = ({
         onSuccess: (message: SocketMessage) => {
           setValue("text", "");
           emitNewMessage(message);
+          setFocus("text");
         },
       },
     );
@@ -127,7 +128,7 @@ export const ChatInput = ({
             render={({ field }) => (
               <Input
                 {...field}
-                disabled={isUploading || isPending}
+                disabled={isUploading}
                 className="pl-10"
                 placeholder={t("textarea-placeholder", {
                   channel: channelName,
