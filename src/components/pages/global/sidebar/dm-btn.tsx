@@ -19,19 +19,19 @@ export const DmButton = () => {
   const { data: incoming = [] } = api.friend.listIncomingRequests.useQuery();
   const pendingCount = incoming.length;
 
-  const isInDirects = useMemo(() => {
-    return pathname.includes("/app/directs");
+  const isInDirect = useMemo(() => {
+    return pathname.includes("/app/direct");
   }, [pathname]);
 
   return (
-    <Link href="/app/directs">
+    <Link href="/app/direct">
       <Tooltip>
         <TooltipContent side="right">{t("dm")}</TooltipContent>
         <TooltipTrigger asChild>
           <Button
             className={cn(
               "relative rounded-full p-6 hover:rounded-lg",
-              isInDirects && "rounded-lg bg-primary/40 hover:bg-primary/40",
+              isInDirect && "rounded-lg bg-primary/40 hover:bg-primary/40",
             )}
             variant="secondary"
             size="icon"
@@ -44,7 +44,7 @@ export const DmButton = () => {
             <MessageCircle
               className={cn(
                 "flex-none text-zinc-500",
-                isInDirects && "text-primary",
+                isInDirect && "text-primary",
               )}
               size={22}
             />

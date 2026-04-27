@@ -3,10 +3,10 @@
 import { api } from "@/trpc/react";
 import { useEffect, useMemo, useState } from "react";
 
-export type DirectsTab = "online" | "all" | "pending";
+export type DirectTab = "online" | "all" | "pending";
 
 export const useRequestPanel = () => {
-  const [tab, setTab] = useState<DirectsTab>("all");
+  const [tab, setTab] = useState<DirectTab>("all");
   const [query, setQuery] = useState("");
   const [showAddFriend, setShowAddFriend] = useState(false);
   const utils = api.useUtils();

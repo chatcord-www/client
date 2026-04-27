@@ -1,14 +1,14 @@
 "use client";
 
-import { AddFriendPanel } from "@/components/pages/directs/add-friend-panel";
-import { FriendsTab } from "@/components/pages/directs/friends-tab";
-import { PendingTab } from "@/components/pages/directs/pending-tab";
+import { AddFriendPanel } from "@/components/pages/direct/add-friend-panel";
+import { FriendsTab } from "@/components/pages/direct/friends-tab";
+import { PendingTab } from "@/components/pages/direct/pending-tab";
 import type {
   FriendItem,
   IncomingRequestItem,
   OutgoingRequestItem,
-} from "@/components/pages/directs/types";
-import { useRequestPanel } from "@/components/pages/directs/UseRequestPanel";
+} from "@/components/pages/direct/types";
+import { useRequestPanel } from "@/components/pages/direct/UseRequestPanel";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 

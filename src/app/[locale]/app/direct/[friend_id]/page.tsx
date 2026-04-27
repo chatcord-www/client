@@ -36,7 +36,7 @@ export default async function DirectFriendPage(props: {
     .limit(1);
 
   if (!friend[0]?.id) {
-    redirect("/app/directs");
+    redirect("/app/direct");
   }
 
   const friendInfo = friend[0]!;

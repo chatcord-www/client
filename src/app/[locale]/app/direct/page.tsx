@@ -1,9 +1,9 @@
 import { RequestsPanel } from "./_components/requests-panel";
 
 export const metadata = {
-  title: "Chat • Directs",
+  title: "Chat • Direct",
 };
 
-export default function DirectsPage() {
+export default function DirectPage() {
   return <RequestsPanel />;
 }

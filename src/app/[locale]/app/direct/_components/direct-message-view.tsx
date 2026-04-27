@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { MessagesProvider } from "@/components/providers/messages";
 import { TypingIndicatorBar } from "@/components/pages/chat/typing-indicator/typing-indicator-bar";
 import { cn } from "@/lib/utils";
-import { getActivityColor } from "@/components/pages/directs/types";
+import { getActivityColor } from "@/components/pages/direct/types";
 import { ChannelContainer } from "@/components/pages/channel/container";
 import {
   Phone,

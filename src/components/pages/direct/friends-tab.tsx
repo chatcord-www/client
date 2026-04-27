@@ -24,7 +24,7 @@ export const FriendsTab = ({
         return (
           <Link
             key={friend.id}
-            href={`/app/directs/${friend.id}`}
+            href={`/app/direct/${friend.id}`}
             className="flex items-center justify-between rounded-md border border-transparent px-2 py-2 hover:border-white/10 hover:bg-white/[0.03]"
           >
             <div className="flex min-w-0 items-center gap-3">

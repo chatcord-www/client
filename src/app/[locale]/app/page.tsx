@@ -1,3 +1,5 @@
+import { redirect } from "@/navigation";
+
 export default function AppPage() {
-  return <div></div>;
+  redirect("/app/direct");
 }
