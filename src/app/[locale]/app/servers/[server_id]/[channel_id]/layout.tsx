@@ -1,4 +1,5 @@
 import { ChatInput } from "@/components/ui/chat-input";
+import { TypingIndicatorBar } from "@/components/pages/chat/typing-indicator/typing-indicator-bar";
 import { MembersList } from "@/components/pages/channel/members-list";
 import { db } from "@/server/db";
 
@@ -51,6 +52,9 @@ export default async function ChannelLayout({
     <div className="w-full h-[calc(100vh-20px)] flex">
       <div className="flex-1 flex flex-col min-w-0">
       <div className="flex-1 overflow-hidden">{children}</div>
+      <div className="px-4 pb-1">
+        <TypingIndicatorBar />
+      </div>
       <ChatInput
         channelName={channelInfo?.name as string}
         channelId={params.channel_id}

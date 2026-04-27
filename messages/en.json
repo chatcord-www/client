@@ -30,6 +30,11 @@
       "failed": "Upload failed. Please try again."
     },
     "no-messages": "No messages yet. Start the conversation!",
+    "typing": {
+      "one": "{name} is typing...",
+      "two": "{firstName} and {secondName} are typing...",
+      "many": "{count} people are typing..."
+    },
     "message": {
       "edit": "Edit Text",
       "reply": "Reply",

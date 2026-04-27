@@ -30,15 +30,23 @@ export const initializeSocket = (server: HttpServer) => {
     });
 
     socket.on("connect_direct", (userId, friendId) => {
-      socket.join(`${userId}:${friendId}`);
-      console.log(`User ${socket.id} joined direct room ${userId}:${friendId}`);
+      socket.join([userId, friendId].sort().join(":"));
+      console.log(`User ${socket.id} joined direct room ${[userId, friendId].sort().join(":")  }`);
     });
 
     socket.on("receive_direct_message", (userId, friendId, message) => {
-      io.to(`${userId}:${friendId}`).emit("direct_message_polling", message);
+      io.to([userId, friendId].sort().join(":")).emit("direct_message_polling", message);
       console.log(
-        `Direct message sent in ${userId}:${friendId}: ${JSON.stringify(message)}`
+        `Direct message sent in ${[userId, friendId].sort().join(":")}: ${JSON.stringify(message)}`
       );
+    });
+
+    socket.on("typing_guild", (serverId, channelId, message) => {
+      io.to(`${serverId}:${channelId}`).emit("typing_polling", message);
+    });
+
+    socket.on("typing_direct", (userId, friendId, message) => {
+      io.to([userId, friendId].sort().join(":")).emit("direct_typing_polling", message);
     });
 
     socket.on("disconnect", () => {

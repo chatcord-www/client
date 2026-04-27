@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ChatInput } from "@/components/ui/chat-input";
 import { Input } from "@/components/ui/input";
 import { MessagesProvider } from "@/components/providers/messages";
+import { TypingIndicatorBar } from "@/components/pages/chat/typing-indicator/typing-indicator-bar";
 import { cn } from "@/lib/utils";
 import { getActivityColor } from "@/components/pages/directs/types";
 import { ChannelContainer } from "@/components/pages/channel/container";
@@ -81,6 +82,10 @@ export const DirectMessageView = ({
         <div className="flex min-h-0 flex-1 flex-col">
           <MessagesProvider currentUserId={currentUserId} friendId={friend.id}>
             <ChannelContainer currentUserId={currentUserId} friendId={friend.id} />
+
+            <div className="px-4 pb-1">
+              <TypingIndicatorBar />
+            </div>
 
           <div className="border-t border-white/10 px-4 py-4">
               <ChatInput

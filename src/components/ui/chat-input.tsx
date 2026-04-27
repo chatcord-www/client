@@ -1,6 +1,7 @@
 "use client";
 
 import { useOutSideClick } from "@/hooks/outside-click";
+import { useChatTypingEmitter } from "@/hooks/chat-typing-emitter";
 import { socket } from "@/lib/socket";
 import { UploadMediaButton } from "@/components/pages/chat/actions/upload-media-button";
 import { type SocketMessage } from "@/components/pages/chat/types/socket-message";
@@ -43,6 +44,12 @@ export const ChatInput = ({
   const [isUploading, setIsUploading] = useState(false);
   const emojiRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const { onTextChangeTyping, stopTyping } = useChatTypingEmitter({
+    channelId,
+    serverId,
+    currentUserId,
+    friendId,
+  });
   useOutSideClick(emojiRef, () => setShowEmojis(false));
   const { mutate: sendMessage } = api.sendMessage.useMutation();
 
@@ -71,12 +78,19 @@ export const ChatInput = ({
     }
   };
 
+  const onTextChange = (value: string) => {
+    setValue("text", value);
+    onTextChangeTyping(value);
+  };
+
   const onSubmit = ({ text }: TextareaFormType) => {
     if (!text || !text.trim()) return;
 
     if (!friendId && !(serverId && channelId)) {
       return;
     }
+
+    stopTyping();
 
     sendMessage(
       { channelId, serverId, text, friendId },
@@ -128,6 +142,7 @@ export const ChatInput = ({
             render={({ field }) => (
               <Input
                 {...field}
+                onChange={(event) => onTextChange(event.target.value)}
                 disabled={isUploading}
                 className="pl-10"
                 placeholder={t("textarea-placeholder", {
