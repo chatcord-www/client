@@ -105,10 +105,36 @@ export const Message = ({
     });
   };
 
+  const handleJumpToRepliedMessage = () => {
+    if (!replyTo?.id) return;
+
+    const target = document.querySelector<HTMLElement>(
+      `[data-message-id="${replyTo.id}"]`,
+    );
+
+    if (!target) return;
+
+    const highlightedTarget = target as HTMLElement & {
+      replyHighlightTimeout?: number;
+    };
+
+    if (highlightedTarget.replyHighlightTimeout) {
+      window.clearTimeout(highlightedTarget.replyHighlightTimeout);
+    }
+
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    target.style.backgroundColor = "rgba(59, 130, 246, 0.18)";
+
+    highlightedTarget.replyHighlightTimeout = window.setTimeout(() => {
+      target.style.backgroundColor = "";
+    }, 3000);
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div className="py-3 hover:bg-slate-700/10 px-4 cursor-default">
+        <div className="py-3 hover:bg-slate-700/10 px-4 cursor-default" data-message-id={id}>
           <div className="flex items-end">
             <Avatar className="mb-0.5 shrink-0">
               <AvatarFallback>{username[0]}</AvatarFallback>
@@ -116,21 +142,25 @@ export const Message = ({
             </Avatar>
             <div className="ml-2 w-full">
               {!isEditing && replyTo && (
-                <div className="-ml-7 mb-1 flex items-center gap-1.5 text-[13px]">
-                  <span className="h-4 w-8 shrink-0 self-center rounded-tl-md border-l border-t border-zinc-600/70" />
+                <button
+                  type="button"
+                  className="group -ml-7 mb-1 flex items-center gap-1.5 text-[13px] transition-colors"
+                  onClick={handleJumpToRepliedMessage}
+                >
+                  <span className="h-4 w-8 shrink-0 self-center rounded-tl-md border-l border-t border-zinc-600/70 transition-colors group-hover:border-zinc-400/90" />
                   <Avatar className="size-[18px] shrink-0">
                     <AvatarFallback className="text-[10px]">
                       {replyTo.user.name?.[0] ?? "?"}
                     </AvatarFallback>
                     <AvatarImage src={replyTo.user.avatar} />
                   </Avatar>
-                  <span className="shrink-0 truncate font-semibold text-zinc-300">
+                  <span className="shrink-0 truncate font-semibold text-zinc-300 transition-colors group-hover:text-zinc-100">
                     {replyTo.user.name}
                   </span>
-                  <p className="min-w-0 truncate text-zinc-400">
+                  <p className="min-w-0 truncate text-zinc-400 transition-colors group-hover:text-zinc-300">
                     {replyTo.content}
                   </p>
-                </div>
+                </button>
               )}
               <div className="flex items-center gap-2">
                 <div className="text-sm">{username}</div>
