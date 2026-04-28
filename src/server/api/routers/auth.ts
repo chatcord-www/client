@@ -1,6 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { generateUniqueDiscriminator } from "@/server/discriminator";
-import { sendConfirmationEmail } from "@/server/email";
+import { sendConfirmationEmail, sendPasswordResetEmail } from "@/server/email";
 import { users } from "@/server/db/schema";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
@@ -10,6 +10,10 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const CONFIRMATION_CODE_LENGTH = 6;
+
+function generateNumericCode(length: number) {
+  return Array.from({ length }, () => Math.floor(Math.random() * 10)).join("");
+}
 
 function getJwtSecret() {
   return env.NEXTAUTH_SECRET ?? "dev-secret";
@@ -41,10 +45,7 @@ export const authRouter = createTRPCRouter({
 
       const passwordHash = await bcrypt.hash(input.password, 12);
 
-      const confirmationCode = Array.from(
-        { length: CONFIRMATION_CODE_LENGTH },
-        () => Math.floor(Math.random() * 10),
-      ).join("");
+      const confirmationCode = generateNumericCode(CONFIRMATION_CODE_LENGTH);
 
       const token = jwt.sign(
         {
@@ -144,5 +145,98 @@ export const authRouter = createTRPCRouter({
       }
 
       return { userId: user.id };
+    }),
+
+  requestPasswordResetCode: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.query.users.findFirst({
+        columns: { email: true },
+        where: eq(users.email, input.email),
+      });
+
+      const confirmationCode = generateNumericCode(CONFIRMATION_CODE_LENGTH);
+      const token = jwt.sign(
+        {
+          email: input.email,
+          confirmationCode,
+          purpose: "password-reset",
+        },
+        getJwtSecret(),
+        { expiresIn: "15m" },
+      );
+
+      if (user?.email) {
+        await sendPasswordResetEmail(user.email, confirmationCode);
+      }
+
+      return { token };
+    }),
+
+  resetPassword: publicProcedure
+    .input(
+      z
+        .object({
+          token: z.string(),
+          code: z.string().length(CONFIRMATION_CODE_LENGTH),
+          password: z.string().min(8),
+          repeat_password: z.string().min(8),
+        })
+        .refine(({ password, repeat_password }) => password === repeat_password, {
+          message: "password-not-match",
+          path: ["repeat_password"],
+        }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      let decoded: {
+        email: string;
+        confirmationCode: string;
+        purpose: string;
+      };
+
+      try {
+        decoded = jwt.verify(input.token, getJwtSecret()) as typeof decoded;
+      } catch {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "token-expired",
+        });
+      }
+
+      if (decoded.purpose !== "password-reset") {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "token-expired",
+        });
+      }
+
+      if (decoded.confirmationCode !== input.code) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "invalid-code",
+        });
+      }
+
+      const user = await ctx.db.query.users.findFirst({
+        columns: { id: true },
+        where: eq(users.email, decoded.email),
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "invalid-code" });
+      }
+
+      const passwordHash = await bcrypt.hash(input.password, 12);
+
+      await ctx.db
+        .update(users)
+        .set({ password: passwordHash })
+        .where(eq(users.id, user.id));
+
+      return { success: true };
     }),
 });

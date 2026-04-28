@@ -160,15 +160,29 @@
   },
   "recover": {
     "title": "Recover password",
-    "subtitle": "Input email of your lost account",
+    "subtitle": "Enter your email to receive a verification code",
+    "email-sent-hint": "If an account exists for {email}, we sent a 6-digit code.",
     "form": {
-      "email": "Email"
+      "email": "Email",
+      "code": "Verification code",
+      "password": "New password",
+      "repeat-password": "Repeat new password"
     },
     "errors": {
       "email": "Email is invalid",
-      "required": "This field is required"
+      "required": "This field is required",
+      "code-invalid": "Code must be 6 digits",
+      "password-short": "Password must be at least 8 characters",
+      "password-not-match": "Repeated password does not match password",
+      "invalid-code": "The code you entered is incorrect",
+      "token-expired": "Code expired. Request a new one.",
+      "unexpected": "Something went wrong. Please try again."
     },
-    "submit": "Recover"
+    "send-code": "Send code",
+    "reset-password": "Reset password",
+    "resend-code": "Resend code",
+    "resend-in": "Resend in {seconds}s",
+    "change-email": "Use a different email"
   },
   "members": {
     "online": "Online",

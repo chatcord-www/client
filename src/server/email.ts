@@ -17,3 +17,12 @@ export async function sendConfirmationEmail(to: string, code: string) {
     text: `Your confirmation code is: ${code}`,
   });
 }
+
+export async function sendPasswordResetEmail(to: string, code: string) {
+  await transporter.sendMail({
+    from: `"Chatcord" <${env.EMAIL_USER}>`,
+    to,
+    subject: "Reset your password",
+    text: `Your password reset code is: ${code}`,
+  });
+}
