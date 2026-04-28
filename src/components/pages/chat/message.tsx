@@ -24,6 +24,7 @@ import { DeleteMessageButton } from "@/components/pages/chat/actions/delete-mess
 import { MediaPreviewModal } from "@/components/pages/chat/modals/media-preview-modal";
 import { getMediaType } from "@/components/pages/chat/utils/get-media-type";
 import Twemoji from "react-twemoji";
+import { useReplyStore } from "@/hooks/use-reply-store";
 
 type MessageProps = {
   id: string;
@@ -34,6 +35,15 @@ type MessageProps = {
   createdAt: Date;
   session: Session;
   editedAt?: Date;
+  replyTo?: {
+    id: string;
+    content: string;
+    user: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+  } | null;
   onEditMessage: (params: { messageId: string; newContent: string }) => Promise<any>;
 };
 
@@ -46,6 +56,7 @@ export const Message = ({
   userId,
   session,
   editedAt,
+  replyTo,
   onEditMessage,
 }: MessageProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -54,6 +65,7 @@ export const Message = ({
   const [editedMessage, setEditedMessage] = useState<string>(message);
   const utils = api.useUtils?.();
   const mediaType = getMediaType(message);
+  const { loadSelectedReply } = useReplyStore();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -83,16 +95,43 @@ export const Message = ({
     }
   };
 
+  const handleReply = () => {
+    loadSelectedReply({
+      id,
+      content: message,
+      username,
+      avatar,
+      mediaType,
+    });
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
         <div className="py-3 hover:bg-slate-700/10 px-4 cursor-default">
-          <div className="flex">
-            <Avatar>
+          <div className="flex items-end">
+            <Avatar className="mb-0.5 shrink-0">
               <AvatarFallback>{username[0]}</AvatarFallback>
               <AvatarImage src={avatar} />
             </Avatar>
             <div className="ml-2 w-full">
+              {!isEditing && replyTo && (
+                <div className="-ml-7 mb-1 flex items-center gap-1.5 text-[13px]">
+                  <span className="h-4 w-8 shrink-0 self-center rounded-tl-md border-l border-t border-zinc-600/70" />
+                  <Avatar className="size-[18px] shrink-0">
+                    <AvatarFallback className="text-[10px]">
+                      {replyTo.user.name?.[0] ?? "?"}
+                    </AvatarFallback>
+                    <AvatarImage src={replyTo.user.avatar} />
+                  </Avatar>
+                  <span className="shrink-0 truncate font-semibold text-zinc-300">
+                    {replyTo.user.name}
+                  </span>
+                  <p className="min-w-0 truncate text-zinc-400">
+                    {replyTo.content}
+                  </p>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <div className="text-sm">{username}</div>
                 <time className="text-xs text-zinc-400">
@@ -188,7 +227,7 @@ export const Message = ({
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent forceMount>
-        <ContextMenuItem>
+        <ContextMenuItem onClick={handleReply}>
           <div className="flex justify-between items-center w-full gap-3">
             <div className="text-xs">{t("reply")}</div>
             <Reply size={15} />

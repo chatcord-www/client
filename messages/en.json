@@ -42,6 +42,9 @@
       "copy-user-id": "Copy User ID",
       "delete-message": "Delete Message",
       "copy-message-id": "Copy Message ID",
+      "replying-to": "Replying to",
+      "cancel-reply": "Cancel",
+      "original-message-deleted": "(original message deleted)",
       "delete-modal": {
         "title": "Delete Message",
         "description": "Are you sure you want to delete this message?",

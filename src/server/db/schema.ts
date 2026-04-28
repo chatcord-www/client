@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  AnyPgColumn,
   boolean,
   check,
   index,
@@ -124,6 +125,10 @@ export const messages = createTable("message", {
     mode: "date",
     withTimezone: true,
   }),
+  replyToId: varchar("replyToId", { length: 255 }).references(
+    (): AnyPgColumn => messages.id,
+    { onDelete: "set null" },
+  ),
   },
   (_table) => ({
     messageModeConsistency: check(
@@ -169,6 +174,11 @@ export const messagesRelations = relations(messages, ({ one }) => ({
   servers: one(servers, {
     fields: [messages.serverId],
     references: [servers.id],
+  }),
+  replyTo: one(messages, {
+    fields: [messages.replyToId],
+    references: [messages.id],
+    relationName: "replies",
   }),
 }));
 

@@ -31,7 +31,14 @@ export const getMessages = publicProcedure
           eq(messages.serverId, input.serverId as string),
           eq(messages.channelId, input.channelId as string),
         ),
-      with: { users: true },
+      with: { 
+        users: true,
+        replyTo: {
+          with: {
+            users: true,
+          },
+        },
+      },
       orderBy: (messages) => asc(messages.createdAt),
     });
 
@@ -40,6 +47,16 @@ export const getMessages = publicProcedure
       id: message.id,
       createdAt: message.createdAt,
       editedAt: message.editedAt,
+      replyToId: message.replyToId,
+      replyTo: message.replyTo ? {
+        id: message.replyTo.id,
+        content: message.replyTo.content,
+        user: {
+          id: message.replyTo.users?.id,
+          name: message.replyTo.users?.name,
+          avatar: message.replyTo.users?.image,
+        },
+      } : null,
       user: {
         id: message.users?.id,
         name: message.users?.name,

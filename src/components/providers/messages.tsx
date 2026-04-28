@@ -17,6 +17,16 @@ type Message = {
   content: string;
   id: string;
   createdAt: Date;
+  replyToId?: string;
+  replyTo?: {
+    id: string;
+    content: string;
+    user: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+  } | null;
   user: {
     id: string;
     name: string;

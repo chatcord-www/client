@@ -1,4 +1,5 @@
 import { type SocketMessage } from "@/components/pages/chat/types/socket-message";
+import { useReplyStore } from "@/hooks/use-reply-store";
 import { api } from "@/trpc/react";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
@@ -23,6 +24,7 @@ export const useUploadMediaButton = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync: sendMessage } = api.sendMessage.useMutation();
   const { mutateAsync: createUploadUrl } = api.generateSignedUrl.useMutation();
+  const { selectedReply, clearSelectedReply } = useReplyStore();
 
   const openFilePicker = () => {
     fileInputRef.current?.click();
@@ -72,10 +74,12 @@ export const useUploadMediaButton = ({
         channelId,
         serverId,
         text: fileUrl,
-        friendId
+        friendId,
+        replyToId: selectedReply?.id,
       });
 
       onUploaded(message);
+      clearSelectedReply();
       event.target.value = "";
     } catch (error) {
       console.log(t("upload.failed"), error);

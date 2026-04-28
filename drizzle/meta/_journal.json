@@ -85,6 +85,13 @@
       "when": 1776971041028,
       "tag": "0011_glorious_ego",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1777317276088,
+      "tag": "0012_previous_giant_girl",
+      "breakpoints": true
     }
   ]
 }

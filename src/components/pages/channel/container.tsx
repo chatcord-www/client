@@ -82,6 +82,7 @@ export const ChannelContainer = ({
             username={message.user?.name}
             session={session as Session}
             editedAt={message.editedAt}
+            replyTo={message.replyTo}
             onEditMessage={handleEditMessage}
           />
         ))

@@ -2,6 +2,7 @@
 
 import { useOutSideClick } from "@/hooks/outside-click";
 import { useChatTypingEmitter } from "@/hooks/chat-typing-emitter";
+import { useReplyStore } from "@/hooks/use-reply-store";
 import { socket } from "@/lib/socket";
 import { UploadMediaButton } from "@/components/pages/chat/actions/upload-media-button";
 import { type SocketMessage } from "@/components/pages/chat/types/socket-message";
@@ -14,6 +15,7 @@ import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z, type ZodType } from "zod";
 import { Input } from "./input";
+import { X } from "lucide-react";
 
 type ChatInputProps = {
   channelName?: string | null;
@@ -40,6 +42,7 @@ export const ChatInput = ({
   friendId,
 }: ChatInputProps) => {
   const t = useTranslations("channel");
+  const tMessage = useTranslations("channel.message");
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState(false);
   const emojiRef = useRef<HTMLDivElement>(null);
@@ -50,6 +53,7 @@ export const ChatInput = ({
     currentUserId,
     friendId,
   });
+  const { selectedReply, clearSelectedReply } = useReplyStore();
   useOutSideClick(emojiRef, () => setShowEmojis(false));
   const { mutate: sendMessage } = api.sendMessage.useMutation();
 
@@ -93,12 +97,13 @@ export const ChatInput = ({
     stopTyping();
 
     sendMessage(
-      { channelId, serverId, text, friendId },
+      { channelId, serverId, text, friendId, replyToId: selectedReply?.id,  },
       {
         onSuccess: (message: SocketMessage) => {
           setValue("text", "");
           emitNewMessage(message);
           setFocus("text");
+          clearSelectedReply();
         },
       },
     );
@@ -119,6 +124,23 @@ export const ChatInput = ({
               setValue("text", `${getValues("text") + emoji.emoji}`)
             }
           />
+        </div>
+      )}
+      {selectedReply && (
+        <div className="mx-4 mt-2 p-2 bg-zinc-800/50 rounded flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-zinc-400">
+              {tMessage("replying-to")} <span className="font-semibold text-zinc-300">{selectedReply.username}</span>
+            </p>
+            <p className="text-sm text-zinc-300 truncate">{selectedReply.content}</p>
+          </div>
+          <button
+            onClick={clearSelectedReply}
+            className="ml-2 p-1 hover:bg-zinc-700 rounded transition"
+            type="button"
+          >
+            <X size={16} className="text-zinc-400" />
+          </button>
         </div>
       )}
       <div className="relative">
