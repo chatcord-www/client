@@ -2,6 +2,7 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { generateUniqueDiscriminator } from "@/server/discriminator";
 import { users } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -91,6 +92,48 @@ export const userRouter = createTRPCRouter({
         .update(users)
         .set(updateData)
         .where(eq(users.id, ctx.session.user.id));
+
+      return { success: true };
+    }),
+  changePassword: protectedProcedure
+    .input(
+      z
+        .object({
+          current_password: z.string().min(8),
+          password: z.string().min(8),
+          repeat_password: z.string().min(8),
+        })
+        .refine(({ password, repeat_password }) => password === repeat_password, {
+          message: "password-not-match",
+          path: ["repeat_password"],
+        }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.db.query.users.findFirst({
+        columns: { id: true, password: true },
+        where: eq(users.id, ctx.session.user.id),
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "user-not-found" });
+      }
+
+      if (!user.password) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "password-not-set" });
+      }
+
+      const valid = await bcrypt.compare(input.current_password, user.password);
+
+      if (!valid) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "invalid-current-password" });
+      }
+
+      const passwordHash = await bcrypt.hash(input.password, 12);
+
+      await ctx.db
+        .update(users)
+        .set({ password: passwordHash })
+        .where(eq(users.id, user.id));
 
       return { success: true };
     }),
