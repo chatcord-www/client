@@ -4,22 +4,21 @@ type TypingIndicatorProps = {
   typingNames: string[];
 };
 
-const getTypingText = (typingNames: string[], t: ReturnType<typeof useTranslations>) => {
-  if (typingNames.length === 0) return null;
-  if (typingNames.length === 1) {
-    return t("typing.one", { name: typingNames[0] });
-  }
-
-  if (typingNames.length === 2) {
-    return t("typing.two", { firstName: typingNames[0], secondName: typingNames[1] });
-  }
-
-  return t("typing.many", { count: typingNames.length });
-};
-
 export const TypingIndicator = ({ typingNames }: TypingIndicatorProps) => {
   const t = useTranslations("channel");
-  const typingText = getTypingText(typingNames, t);
+
+  let typingText: string | null = null;
+
+  if (typingNames.length === 1) {
+    typingText = t("typing.one", { name: typingNames[0] });
+  } else if (typingNames.length === 2) {
+    typingText = t("typing.two", {
+      firstName: typingNames[0],
+      secondName: typingNames[1],
+    });
+  } else if (typingNames.length > 2) {
+    typingText = t("typing.many", { count: typingNames.length });
+  }
 
   if (!typingText) return null;
 

@@ -1,1 +1,1 @@
-ALTER TABLE "client_user" ADD COLUMN "password" varchar(255);
+ALTER TABLE "client_user" ADD COLUMN IF NOT EXISTS "password" varchar(255);
