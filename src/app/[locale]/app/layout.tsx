@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/pages/global/sidebar";
+import { VoiceRoomProvider } from "@/components/providers/voice-room";
 import { LocalesType } from "@/i18n";
 import { redirect } from "@/navigation";
 import { getServerAuthSession } from "@/server/auth";
@@ -31,9 +32,11 @@ export default async function AppLayout({
 
 
   return (
+    <VoiceRoomProvider>
     <main className="flex w-full">
       <Sidebar locale={props.params.locale} servers={serversList} />
       <div className="w-full px-4 py-2">{children}</div>
     </main>
+    </VoiceRoomProvider>
   );
 }

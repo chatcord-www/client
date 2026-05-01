@@ -1,5 +1,40 @@
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
+import {
+  VOICE_SOCKET_EVENTS,
+  type VoiceJoinResponse,
+  type VoiceParticipantPayload,
+  type VoiceParticipantStatePayload,
+  type VoiceSignalPayload,
+} from "../../lib/voice";
+
+type VoiceParticipant = VoiceParticipantPayload & {
+  roomId: string;
+};
+
+const voiceParticipantsBySocket = new Map<string, VoiceParticipant>();
+const voiceRooms = new Map<string, Set<string>>();
+
+const serializeParticipant = ({ roomId: _roomId, ...participant }: VoiceParticipant) => participant;
+
+const leaveVoiceRoom = (io: Server, socketId: string) => {
+  const participant = voiceParticipantsBySocket.get(socketId);
+
+  if (!participant) return;
+
+  const roomSockets = voiceRooms.get(participant.roomId);
+  roomSockets?.delete(socketId);
+
+  if (roomSockets?.size === 0) {
+    voiceRooms.delete(participant.roomId);
+  }
+
+  voiceParticipantsBySocket.delete(socketId);
+  io.to(participant.roomId).emit("voice_participant_left", {
+    roomId: participant.roomId,
+    socketId,
+  });
+};
 
 export const initializeSocket = (server: HttpServer) => {
   const io = new Server(server, {
@@ -49,7 +84,87 @@ export const initializeSocket = (server: HttpServer) => {
       io.to([userId, friendId].sort().join(":")).emit("direct_typing_polling", message);
     });
 
+    socket.on(VOICE_SOCKET_EVENTS.joinRoom, (roomId: string, participant: VoiceParticipantPayload, callback?: (response: VoiceJoinResponse) => void) => {
+      leaveVoiceRoom(io, socket.id);
+
+      socket.join(roomId);
+
+      const roomParticipants = Array.from(voiceRooms.get(roomId) ?? [])
+        .map((participantSocketId) => voiceParticipantsBySocket.get(participantSocketId))
+        .filter((value): value is VoiceParticipant => Boolean(value));
+
+      const nextParticipant: VoiceParticipant = {
+        socketId: socket.id,
+        userId: participant.userId,
+        name: participant.name,
+        avatar: participant.avatar ?? null,
+        roomId,
+        muted: false,
+      };
+
+      voiceParticipantsBySocket.set(socket.id, nextParticipant);
+
+      if (!voiceRooms.has(roomId)) {
+        voiceRooms.set(roomId, new Set());
+      }
+
+      voiceRooms.get(roomId)?.add(socket.id);
+
+      if (typeof callback === "function") {
+        callback({
+          participants: roomParticipants.map(serializeParticipant),
+        });
+      }
+
+      socket.to(roomId).emit(VOICE_SOCKET_EVENTS.participantJoined, {
+        roomId,
+        participant: serializeParticipant(nextParticipant),
+      });
+    });
+
+    socket.on(VOICE_SOCKET_EVENTS.signal, (roomId: string, targetSocketId: string, signal: VoiceSignalPayload) => {
+      const sender = voiceParticipantsBySocket.get(socket.id);
+      const receiver = voiceParticipantsBySocket.get(targetSocketId);
+
+      if (!sender || !receiver) return;
+      if (sender.roomId !== roomId || receiver.roomId !== roomId) return;
+
+      io.to(targetSocketId).emit(VOICE_SOCKET_EVENTS.signal, {
+        roomId,
+        fromSocketId: socket.id,
+        participant: serializeParticipant(sender),
+        signal,
+      });
+    });
+
+    socket.on(VOICE_SOCKET_EVENTS.participantState, (roomId: string, state: VoiceParticipantStatePayload) => {
+      const participant = voiceParticipantsBySocket.get(socket.id);
+
+      if (!participant || participant.roomId !== roomId) return;
+
+      participant.muted = Boolean(state?.muted);
+      voiceParticipantsBySocket.set(socket.id, participant);
+
+      io.to(roomId).emit(VOICE_SOCKET_EVENTS.participantState, {
+        roomId,
+        socketId: socket.id,
+        state: {
+          muted: participant.muted,
+        },
+      });
+    });
+
+    socket.on(VOICE_SOCKET_EVENTS.leaveRoom, (roomId: string) => {
+      const participant = voiceParticipantsBySocket.get(socket.id);
+
+      if (!participant || participant.roomId !== roomId) return;
+
+      socket.leave(roomId);
+      leaveVoiceRoom(io, socket.id);
+    });
+
     socket.on("disconnect", () => {
+      leaveVoiceRoom(io, socket.id);
       console.log(`User disconnected: ${socket.id}`);
     });
   });

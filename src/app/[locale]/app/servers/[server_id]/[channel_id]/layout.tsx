@@ -52,6 +52,8 @@ export default async function ChannelLayout({
     <div className="w-full h-[calc(100vh-20px)] flex">
       <div className="flex-1 flex flex-col min-w-0">
       <div className="flex-1 overflow-hidden">{children}</div>
+      {channelInfo?.type === "TEXT" ? (
+        <>
       <div className="px-4 pb-1">
         <TypingIndicatorBar />
       </div>
@@ -60,6 +62,8 @@ export default async function ChannelLayout({
         channelId={params.channel_id}
         serverId={params.server_id}
       />
+        </>
+      ) : null}
       </div>
       <MembersList serverId={params.server_id} />
     </div>

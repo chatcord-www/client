@@ -18,6 +18,8 @@ export const ChannelWrapper = ({
   name,
 }: PropsWithChildren<ChannelWrapperProps>) => {
   const t = useTranslations("channel");
+  const title = type === "VOICE" ? "voice-welcome" : "welcome";
+  const description = type === "VOICE" ? "voice-description" : "description";
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -31,10 +33,10 @@ export const ChannelWrapper = ({
       </div>
       <div className="mt-3 cursor-default p-4">
         <h1 style={GeistMono.style} className="font-black text-2xl">
-          {t("welcome", { channel: name })}
+          {t(title, { channel: name })}
         </h1>
         <p className="text-sm text-white/55">
-          {t("description", { channel: name })}
+          {t(description, { channel: name })}
         </p>
         </div>
       </div>
