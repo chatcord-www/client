@@ -9,6 +9,7 @@ import {
   type VoiceParticipantLeftEvent,
   type VoiceParticipantPayload,
   type VoiceParticipantStateEvent,
+  type VoiceRoomObserverResponse,
   type VoiceSignalEvent,
   type VoiceSignalPayload,
 } from "@/lib/voice";
@@ -16,6 +17,7 @@ import { socket } from "@/lib/socket";
 import { useSession } from "next-auth/react";
 import {
   createContext,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -40,7 +42,11 @@ export type VoiceRoomContextValue = {
   isMuted: boolean;
   joinRoom: ({ channelId, serverId }: VoiceRoomTarget) => Promise<void>;
   leaveRoom: () => Promise<void>;
+  observeRoom: ({ channelId, serverId }: VoiceRoomTarget) => Promise<void>;
+  observedParticipants: VoiceParticipant[];
+  observedRoomId: string | null;
   participants: VoiceParticipant[];
+  stopObservingRoom: (roomId?: string) => void;
   toggleDeafen: () => void;
   toggleMute: () => void;
 };
@@ -139,8 +145,10 @@ const mapJoinError = (
 export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
   const { data: session } = useSession();
   const [participants, setParticipants] = useState<VoiceParticipant[]>([]);
+  const [observedParticipants, setObservedParticipants] = useState<VoiceParticipant[]>([]);
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
   const [connectingRoomId, setConnectingRoomId] = useState<string | null>(null);
+  const [observedRoomId, setObservedRoomId] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isDeafened, setIsDeafened] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
@@ -148,6 +156,7 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
   const peerConnectionsRef = useRef<Map<string, RTCPeerConnection>>(new Map());
   const pendingCandidatesRef = useRef<Map<string, RTCIceCandidateInit[]>>(new Map());
   const activeRoomRef = useRef<string | null>(null);
+  const observedRoomRef = useRef<string | null>(null);
 
   const updateParticipant = (
     socketId: string,
@@ -191,6 +200,40 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
     setParticipants((currentParticipants) =>
       currentParticipants.filter((participant) => participant.socketId !== socketId),
     );
+  };
+
+  const upsertObservedParticipant = (participant: VoiceParticipantPayload) => {
+    setObservedParticipants((currentParticipants) => {
+      const existingParticipant = currentParticipants.find(
+        (value) => value.socketId === participant.socketId,
+      );
+
+      if (!existingParticipant) {
+        return [...currentParticipants, createParticipant(participant, false, null)];
+      }
+
+      return currentParticipants.map((value) =>
+        value.socketId === participant.socketId
+          ? {
+              ...value,
+              ...participant,
+              isLocal: false,
+            }
+          : value,
+      );
+    });
+  };
+
+  const removeObservedParticipant = (socketId: string) => {
+    setObservedParticipants((currentParticipants) =>
+      currentParticipants.filter((participant) => participant.socketId !== socketId),
+    );
+  };
+
+  const clearObservedRoom = () => {
+    observedRoomRef.current = null;
+    setObservedRoomId(null);
+    setObservedParticipants([]);
   };
 
   const flushPendingCandidates = async (socketId: string) => {
@@ -284,6 +327,20 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
     activeRoomRef.current = null;
   };
 
+  const stopObservingRoom = useCallback((roomId?: string) => {
+    const currentObservedRoomId = observedRoomRef.current;
+
+    if (!currentObservedRoomId || (roomId && currentObservedRoomId !== roomId)) {
+      return;
+    }
+
+    if (socket.connected) {
+      socket.emit(VOICE_SOCKET_EVENTS.stopObservingRoom, currentObservedRoomId);
+    }
+
+    clearObservedRoom();
+  }, []);
+
   const ensureSocketConnection = async () => {
     if (socket.connected) return;
 
@@ -305,13 +362,13 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
-  const leaveRoom = async () => {
+  const leaveRoom = useCallback(async () => {
     if (activeRoomRef.current && socket.connected) {
       socket.emit(VOICE_SOCKET_EVENTS.leaveRoom, activeRoomRef.current);
     }
 
     resetRoomState();
-  };
+  }, []);
 
   const requestVoiceJoin = (
     roomId: string,
@@ -333,7 +390,34 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
       );
     });
 
-  const joinRoom = async ({ channelId, serverId }: VoiceRoomTarget) => {
+  const observeRoom = useCallback(async ({ channelId, serverId }: VoiceRoomTarget) => {
+    const roomId = buildVoiceRoomId(serverId, channelId);
+
+    if (activeRoomRef.current === roomId || observedRoomRef.current === roomId) {
+      return;
+    }
+
+    await ensureSocketConnection();
+
+    await new Promise<VoiceRoomObserverResponse>((resolve) => {
+      socket.emit(
+        VOICE_SOCKET_EVENTS.observeRoom,
+        roomId,
+        (response: VoiceRoomObserverResponse) => {
+          observedRoomRef.current = roomId;
+          setObservedRoomId(roomId);
+          setObservedParticipants(
+            response.participants.map((participant) =>
+              createParticipant(participant, false, null),
+            ),
+          );
+          resolve(response);
+        },
+      );
+    });
+  }, []);
+
+  const joinRoom = useCallback(async ({ channelId, serverId }: VoiceRoomTarget) => {
     const roomId = buildVoiceRoomId(serverId, channelId);
 
     if (activeRoomRef.current === roomId || connectingRoomId === roomId) return;
@@ -350,6 +434,10 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
     setConnectingRoomId(roomId);
 
     try {
+      if (observedRoomRef.current === roomId) {
+        stopObservingRoom(roomId);
+      }
+
       if (activeRoomRef.current && activeRoomRef.current !== roomId) {
         await leaveRoom();
       }
@@ -394,9 +482,9 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
       console.error("Failed to join voice room", joinError);
       setErrorKey(mapJoinError(joinError, permissionState));
     }
-  };
+  }, [connectingRoomId, leaveRoom, session, stopObservingRoom]);
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     const nextMuted = !isMuted;
 
     microphoneStreamRef.current?.getAudioTracks().forEach((track) => {
@@ -417,11 +505,11 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
         muted: nextMuted,
       });
     }
-  };
+  }, [isMuted]);
 
-  const toggleDeafen = () => {
+  const toggleDeafen = useCallback(() => {
     setIsDeafened((value) => !value);
-  };
+  }, []);
 
   useEffect(() => {
     const onParticipantJoined = ({ roomId: eventRoomId, participant }: VoiceParticipantEvent) => {
@@ -429,6 +517,11 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
       if (participant.socketId === socket.id) return;
 
       upsertParticipant(participant, false, null);
+    };
+
+    const onObservedParticipantJoined = ({ roomId: eventRoomId, participant }: VoiceParticipantEvent) => {
+      if (eventRoomId !== observedRoomRef.current) return;
+      upsertObservedParticipant(participant);
     };
 
     const onParticipantLeft = ({ roomId: eventRoomId, socketId }: VoiceParticipantLeftEvent) => {
@@ -440,6 +533,11 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
       removeParticipant(socketId);
     };
 
+    const onObservedParticipantLeft = ({ roomId: eventRoomId, socketId }: VoiceParticipantLeftEvent) => {
+      if (eventRoomId !== observedRoomRef.current) return;
+      removeObservedParticipant(socketId);
+    };
+
     const onParticipantState = ({ roomId: eventRoomId, socketId, state }: VoiceParticipantStateEvent) => {
       if (eventRoomId !== activeRoomRef.current) return;
 
@@ -447,6 +545,18 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
         ...participant,
         muted: state.muted,
       }));
+    };
+
+    const onObservedParticipantState = ({ roomId: eventRoomId, socketId, state }: VoiceParticipantStateEvent) => {
+      if (eventRoomId !== observedRoomRef.current) return;
+
+      setObservedParticipants((currentParticipants) =>
+        currentParticipants.map((participant) =>
+          participant.socketId === socketId
+            ? { ...participant, muted: state.muted }
+            : participant,
+        ),
+      );
     };
 
     const onVoiceSignal = async ({ roomId: eventRoomId, fromSocketId, participant, signal }: VoiceSignalEvent) => {
@@ -486,22 +596,29 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
     };
 
     const onDisconnect = () => {
-      if (!activeRoomRef.current) return;
+      if (!activeRoomRef.current && !observedRoomRef.current) return;
 
       resetRoomState();
+      clearObservedRoom();
       setErrorKey("voice.connection-lost");
     };
 
     socket.on(VOICE_SOCKET_EVENTS.participantJoined, onParticipantJoined);
+    socket.on(VOICE_SOCKET_EVENTS.participantJoined, onObservedParticipantJoined);
     socket.on(VOICE_SOCKET_EVENTS.participantLeft, onParticipantLeft);
+    socket.on(VOICE_SOCKET_EVENTS.participantLeft, onObservedParticipantLeft);
     socket.on(VOICE_SOCKET_EVENTS.participantState, onParticipantState);
+    socket.on(VOICE_SOCKET_EVENTS.participantState, onObservedParticipantState);
     socket.on(VOICE_SOCKET_EVENTS.signal, onVoiceSignal);
     socket.on("disconnect", onDisconnect);
 
     return () => {
       socket.off(VOICE_SOCKET_EVENTS.participantJoined, onParticipantJoined);
+      socket.off(VOICE_SOCKET_EVENTS.participantJoined, onObservedParticipantJoined);
       socket.off(VOICE_SOCKET_EVENTS.participantLeft, onParticipantLeft);
+      socket.off(VOICE_SOCKET_EVENTS.participantLeft, onObservedParticipantLeft);
       socket.off(VOICE_SOCKET_EVENTS.participantState, onParticipantState);
+      socket.off(VOICE_SOCKET_EVENTS.participantState, onObservedParticipantState);
       socket.off(VOICE_SOCKET_EVENTS.signal, onVoiceSignal);
       socket.off("disconnect", onDisconnect);
     };
@@ -523,7 +640,11 @@ export const VoiceRoomProvider = ({ children }: PropsWithChildren) => {
         isMuted,
         joinRoom,
         leaveRoom,
+        observeRoom,
+        observedParticipants,
+        observedRoomId,
         participants,
+        stopObservingRoom,
         toggleDeafen,
         toggleMute,
       }}

@@ -2,7 +2,7 @@
 
 import { VoiceRoomContext } from "@/components/providers/voice-room";
 import { buildVoiceRoomId } from "@/lib/voice";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 
 type UseVoiceRoomProps = {
   channelId: string;
@@ -19,6 +19,13 @@ export const useVoiceRoom = ({ channelId, serverId }: UseVoiceRoomProps) => {
   const roomId = buildVoiceRoomId(serverId, channelId);
   const isJoined = voiceRoom.activeRoomId === roomId;
   const isConnecting = voiceRoom.connectingRoomId === roomId;
+  const isObserving = voiceRoom.observedRoomId === roomId;
+
+  const participants = isJoined
+    ? voiceRoom.participants
+    : isObserving
+      ? voiceRoom.observedParticipants
+      : [];
 
   return {
     errorKey: isJoined || isConnecting ? voiceRoom.errorKey : null,
@@ -26,9 +33,20 @@ export const useVoiceRoom = ({ channelId, serverId }: UseVoiceRoomProps) => {
     isDeafened: voiceRoom.isDeafened,
     isJoined,
     isMuted: voiceRoom.isMuted,
-    joinRoom: () => voiceRoom.joinRoom({ channelId, serverId }),
+    joinRoom: useCallback(
+      () => voiceRoom.joinRoom({ channelId, serverId }),
+      [channelId, serverId, voiceRoom.joinRoom],
+    ),
     leaveRoom: voiceRoom.leaveRoom,
-    participants: isJoined ? voiceRoom.participants : [],
+    observeRoom: useCallback(
+      () => voiceRoom.observeRoom({ channelId, serverId }),
+      [channelId, serverId, voiceRoom.observeRoom],
+    ),
+    participants,
+    stopObservingRoom: useCallback(
+      () => voiceRoom.stopObservingRoom(roomId),
+      [roomId, voiceRoom.stopObservingRoom],
+    ),
     toggleDeafen: voiceRoom.toggleDeafen,
     toggleMute: voiceRoom.toggleMute,
   };

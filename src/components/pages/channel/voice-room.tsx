@@ -23,10 +23,24 @@ export const VoiceRoom = ({ channelId, serverId }: VoiceRoomProps) => {
     isMuted,
     joinRoom,
     leaveRoom,
+    observeRoom,
     participants,
+    stopObservingRoom,
     toggleDeafen,
     toggleMute,
   } = useVoiceRoom({ channelId, serverId });
+
+  useEffect(() => {
+    if (isJoined) {
+      return;
+    }
+
+    void observeRoom();
+
+    return () => {
+      stopObservingRoom();
+    };
+  }, [isJoined, observeRoom, stopObservingRoom]);
 
   return (
     <div className="flex flex-1 flex-col px-4 pb-4">

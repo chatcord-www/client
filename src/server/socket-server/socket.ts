@@ -4,8 +4,10 @@ import {
   VOICE_SOCKET_EVENTS,
   type VoiceJoinResponse,
   type VoiceParticipantPayload,
+  type VoiceRoomObserverResponse,
   type VoiceParticipantStatePayload,
   type VoiceSignalPayload,
+  buildVoiceObserverRoomId,
 } from "../../lib/voice";
 
 type VoiceParticipant = VoiceParticipantPayload & {
@@ -14,8 +16,27 @@ type VoiceParticipant = VoiceParticipantPayload & {
 
 const voiceParticipantsBySocket = new Map<string, VoiceParticipant>();
 const voiceRooms = new Map<string, Set<string>>();
+const observedVoiceRoomsBySocket = new Map<string, string>();
 
 const serializeParticipant = ({ roomId: _roomId, ...participant }: VoiceParticipant) => participant;
+
+const getRoomParticipants = (roomId: string) =>
+  Array.from(voiceRooms.get(roomId) ?? [])
+    .map((participantSocketId) => voiceParticipantsBySocket.get(participantSocketId))
+    .filter((value): value is VoiceParticipant => Boolean(value));
+
+const emitVoiceRoomEvent = (io: Server, roomId: string, event: string, payload: unknown) => {
+  io.to(roomId).to(buildVoiceObserverRoomId(roomId)).emit(event, payload);
+};
+
+const stopObservingVoiceRoom = (socket: Parameters<Server["on"]>[1] extends (socket: infer T) => void ? T : never) => {
+  const observedRoomId = observedVoiceRoomsBySocket.get(socket.id);
+
+  if (!observedRoomId) return;
+
+  socket.leave(buildVoiceObserverRoomId(observedRoomId));
+  observedVoiceRoomsBySocket.delete(socket.id);
+};
 
 const leaveVoiceRoom = (io: Server, socketId: string) => {
   const participant = voiceParticipantsBySocket.get(socketId);
@@ -30,7 +51,7 @@ const leaveVoiceRoom = (io: Server, socketId: string) => {
   }
 
   voiceParticipantsBySocket.delete(socketId);
-  io.to(participant.roomId).emit("voice_participant_left", {
+  emitVoiceRoomEvent(io, participant.roomId, VOICE_SOCKET_EVENTS.participantLeft, {
     roomId: participant.roomId,
     socketId,
   });
@@ -89,9 +110,7 @@ export const initializeSocket = (server: HttpServer) => {
 
       socket.join(roomId);
 
-      const roomParticipants = Array.from(voiceRooms.get(roomId) ?? [])
-        .map((participantSocketId) => voiceParticipantsBySocket.get(participantSocketId))
-        .filter((value): value is VoiceParticipant => Boolean(value));
+      const roomParticipants = getRoomParticipants(roomId);
 
       const nextParticipant: VoiceParticipant = {
         socketId: socket.id,
@@ -116,10 +135,36 @@ export const initializeSocket = (server: HttpServer) => {
         });
       }
 
-      socket.to(roomId).emit(VOICE_SOCKET_EVENTS.participantJoined, {
+      emitVoiceRoomEvent(io, roomId, VOICE_SOCKET_EVENTS.participantJoined, {
         roomId,
         participant: serializeParticipant(nextParticipant),
       });
+    });
+
+    socket.on(
+      VOICE_SOCKET_EVENTS.observeRoom,
+      (
+        roomId: string,
+        callback?: (response: VoiceRoomObserverResponse) => void,
+      ) => {
+        stopObservingVoiceRoom(socket);
+        observedVoiceRoomsBySocket.set(socket.id, roomId);
+        socket.join(buildVoiceObserverRoomId(roomId));
+
+        if (typeof callback === "function") {
+          callback({
+            participants: getRoomParticipants(roomId).map(serializeParticipant),
+          });
+        }
+      },
+    );
+
+    socket.on(VOICE_SOCKET_EVENTS.stopObservingRoom, (roomId?: string) => {
+      const observedRoomId = observedVoiceRoomsBySocket.get(socket.id);
+
+      if (!observedRoomId || (roomId && observedRoomId !== roomId)) return;
+
+      stopObservingVoiceRoom(socket);
     });
 
     socket.on(VOICE_SOCKET_EVENTS.signal, (roomId: string, targetSocketId: string, signal: VoiceSignalPayload) => {
@@ -145,7 +190,7 @@ export const initializeSocket = (server: HttpServer) => {
       participant.muted = Boolean(state?.muted);
       voiceParticipantsBySocket.set(socket.id, participant);
 
-      io.to(roomId).emit(VOICE_SOCKET_EVENTS.participantState, {
+      emitVoiceRoomEvent(io, roomId, VOICE_SOCKET_EVENTS.participantState, {
         roomId,
         socketId: socket.id,
         state: {
@@ -164,6 +209,7 @@ export const initializeSocket = (server: HttpServer) => {
     });
 
     socket.on("disconnect", () => {
+      stopObservingVoiceRoom(socket);
       leaveVoiceRoom(io, socket.id);
       console.log(`User disconnected: ${socket.id}`);
     });

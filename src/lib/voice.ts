@@ -1,6 +1,8 @@
 export const VOICE_SOCKET_EVENTS = {
   joinRoom: "voice_join_room",
   leaveRoom: "voice_leave_room",
+  observeRoom: "voice_observe_room",
+  stopObservingRoom: "voice_stop_observing_room",
   signal: "voice_signal",
   participantJoined: "voice_participant_joined",
   participantLeft: "voice_participant_left",
@@ -58,5 +60,11 @@ export type VoiceJoinResponse = {
   participants: VoiceParticipantPayload[];
 };
 
+export type VoiceRoomObserverResponse = {
+  participants: VoiceParticipantPayload[];
+};
+
 export const buildVoiceRoomId = (serverId: string, channelId: string) =>
   `${serverId}:${channelId}:voice`;
+
+export const buildVoiceObserverRoomId = (roomId: string) => `${roomId}:observer`;
