@@ -9,8 +9,9 @@ ALTER TABLE "client_message" DROP COLUMN "ownerId";
 ALTER TABLE "client_message" ALTER COLUMN "userId" SET NOT NULL;
 
 -- Recreate constraints using userId instead of ownerId
-ALTER TABLE "client_message"
-ADD CONSTRAINT "client_message_mode_consistency_check" CHECK (
+DO $$ BEGIN
+ ALTER TABLE "client_message"
+ ADD CONSTRAINT "client_message_mode_consistency_check" CHECK (
   (
     "mode" = 'DIRECT'::"message_mode"
     AND "userId" IS NOT NULL
@@ -26,9 +27,16 @@ ADD CONSTRAINT "client_message_mode_consistency_check" CHECK (
     AND "channelId" IS NOT NULL
     AND "friendId" IS NULL
   )
-);
+ );
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 
-ALTER TABLE "client_message"
-ADD CONSTRAINT "client_message_direct_not_self_check" CHECK (
+DO $$ BEGIN
+ ALTER TABLE "client_message"
+ ADD CONSTRAINT "client_message_direct_not_self_check" CHECK (
   "mode" <> 'DIRECT'::"message_mode" OR "userId" <> "friendId"
-);
+ );
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;

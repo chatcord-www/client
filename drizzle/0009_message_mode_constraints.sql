@@ -4,7 +4,7 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
-ALTER TABLE "client_message" ADD COLUMN "mode" "message_mode";
+ALTER TABLE "client_message" ADD COLUMN IF NOT EXISTS "mode" "message_mode";
 --> statement-breakpoint
 UPDATE "client_message"
 SET "mode" = CASE

@@ -1,1 +1,1 @@
-ALTER TABLE "client_message" ADD COLUMN "editedAt" timestamp with time zone;
+ALTER TABLE "client_message" ADD COLUMN IF NOT EXISTS "editedAt" timestamp with time zone;
