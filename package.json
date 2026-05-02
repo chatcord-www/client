@@ -13,6 +13,7 @@
     "format": "prettier --write ./src",
     "dev": "next dev",
     "lint": "next lint",
+    "socket:start": "tsx src/server/socket-server/server.ts",
     "start": "next start",
     "prepare": "husky"
   },

@@ -23,7 +23,7 @@ app.get("/", (_req, res) => {
   res.send("Socket server is running!");
 });
 
-const PORT = Number(process.env.SOCKET_PORT) || 3001;
+const PORT = Number(process.env.PORT) || 3001;
 const HOST = "0.0.0.0";
 
 server.listen(PORT, HOST, () => {
