@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import cors from "cors";
+import { allowedOrigins } from "./config";
 import { initializeSocket } from "./socket";
 
 const app = express();
@@ -10,7 +11,7 @@ const server = createServer(app);
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://chatc0rd.vercel.app"],
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST"],
   })

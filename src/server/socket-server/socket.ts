@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
+import { allowedOrigins } from "./config";
 import {
   VOICE_SOCKET_EVENTS,
   type VoiceJoinResponse,
@@ -60,7 +61,7 @@ const leaveVoiceRoom = (io: Server, socketId: string) => {
 export const initializeSocket = (server: HttpServer) => {
   const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:3000", "https://chatc0rd.vercel.app"],
+      origin: allowedOrigins,
       methods: ["GET", "POST"],
       credentials: true,
     },
