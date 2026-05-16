@@ -34,6 +34,28 @@ export const sendMessage = publicProcedure
       where: (m) => eq(m.id, message[0]?.id as string),
       with: {
         users: true,
+        reactions: {
+          columns: {
+            id: true,
+            emoji: true,
+          },
+          with: {
+            reactedBy: {
+              columns: {
+                userId: true,
+              },
+              with: {
+                user: {
+                  columns: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         replyTo: {
           with: {
             users: true,
@@ -41,8 +63,21 @@ export const sendMessage = publicProcedure
         },
       },
     });
+    const currentUserId = ctx.session?.user.id;
+    const reactions = (fullMessage?.reactions ?? []).map((reaction) => ({
+      id: reaction.id,
+      emoji: reaction.emoji,
+      count: reaction.reactedBy.length,
+      reacted: reaction.reactedBy.some((value) => value.userId === currentUserId),
+      users: reaction.reactedBy.map((value) => ({
+        id: value.user?.id ?? value.userId,
+        name: value.user?.name,
+        avatar: value.user?.image,
+      })),
+    }));
 
     return {
+      reactions,
       content: fullMessage?.content as string,
       id: fullMessage?.id as string,
       createdAt: fullMessage?.createdAt as Date,

@@ -78,6 +78,7 @@ export const ChannelContainer = ({
             avatar={message.user?.avatar}
             createdAt={message.createdAt}
             message={message.content}
+            reactions={message.reactions}
             userId={message.user.id}
             username={message.user?.name}
             session={session as Session}

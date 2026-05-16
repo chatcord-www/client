@@ -25,6 +25,7 @@ import { MediaPreviewModal } from "@/components/pages/chat/modals/media-preview-
 import { getMediaType } from "@/components/pages/chat/utils/get-media-type";
 import Twemoji from "react-twemoji";
 import { useReplyStore } from "@/hooks/use-reply-store";
+import { MessageReactions } from "@/components/pages/chat/reactions/message-reactions";
 
 type MessageProps = {
   id: string;
@@ -35,6 +36,17 @@ type MessageProps = {
   createdAt: Date;
   session: Session;
   editedAt?: Date;
+  reactions: {
+    id: string;
+    emoji: string;
+    count: number;
+    reacted: boolean;
+    users: {
+      id: string;
+      name: string | null;
+      avatar: string | null;
+    }[];
+  }[];
   replyTo?: {
     id: string;
     content: string;
@@ -56,6 +68,7 @@ export const Message = ({
   userId,
   session,
   editedAt,
+  reactions,
   replyTo,
   onEditMessage,
 }: MessageProps) => {
@@ -135,12 +148,12 @@ export const Message = ({
     <ContextMenu>
       <ContextMenuTrigger>
         <div className="py-3 hover:bg-slate-700/10 px-4 cursor-default" data-message-id={id}>
-          <div className="flex items-end">
-            <Avatar className="mb-0.5 shrink-0">
+          <div className="flex items-start gap-3">
+            <Avatar className={`${!isEditing && replyTo ? "mt-5" : "mt-0.5"} shrink-0`}>
               <AvatarFallback>{username[0]}</AvatarFallback>
               <AvatarImage src={avatar} />
             </Avatar>
-            <div className="ml-2 w-full">
+            <div className="w-full min-w-0">
               {!isEditing && replyTo && (
                 <button
                   type="button"
@@ -241,6 +254,10 @@ export const Message = ({
                   {mediaType !== "text" && editedAt && (
                     <p className="mt-1 text-xs text-gray-500">(edited)</p>
                   )}
+                  <MessageReactions
+                    messageId={id}
+                    reactions={reactions}
+                  />
                 </div>
               )}
 

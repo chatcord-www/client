@@ -8,6 +8,7 @@ import { editMessage } from "./routers/editMessage";
 import { deleteMessage } from "./routers/deleteMessage";
 import { generateSignedUrl } from "./routers/generateSignedUrl";
 import { friendRouter } from "./routers/friend";
+import { addReaction } from "./routers/addReaction";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   editMessage,
   deleteMessage,
   generateSignedUrl,
+  addReaction,
   friend: friendRouter,
 });
 

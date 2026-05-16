@@ -17,6 +17,17 @@ type Message = {
   content: string;
   id: string;
   createdAt: Date;
+  reactions: {
+    id: string;
+    emoji: string;
+    count: number;
+    reacted: boolean;
+    users: {
+      id: string;
+      name: string | null;
+      avatar: string | null;
+    }[];
+  }[];
   replyToId?: string;
   replyTo?: {
     id: string;

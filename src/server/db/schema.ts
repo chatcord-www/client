@@ -158,7 +158,49 @@ export const messages = createTable("message", {
   }),
 );
 
-export const messagesRelations = relations(messages, ({ one }) => ({
+export const messageReactions = createTable(
+  "message_reaction",
+  {
+    id: varchar("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    messageId: varchar("message_id", { length: 255 })
+      .notNull()
+      .references(() => messages.id, { onDelete: "cascade" }),
+    emoji: varchar("emoji", { length: 64 }).notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    uniqueMessageReactionEmoji: uniqueIndex(
+      "message_reaction_message_emoji_unique",
+    ).on(table.messageId, table.emoji),
+  }),
+);
+
+export const messageReactionUsers = createTable(
+  "message_reaction_user",
+  {
+    reactionId: varchar("reaction_id", { length: 255 })
+      .notNull()
+      .references(() => messageReactions.id, { onDelete: "cascade" }),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.reactionId, table.userId] }),
+  }),
+);
+
+export const messagesRelations = relations(messages, ({ one, many }) => ({
   users: one(users, {
     fields: [messages.userId],
     references: [users.id],
@@ -180,7 +222,33 @@ export const messagesRelations = relations(messages, ({ one }) => ({
     references: [messages.id],
     relationName: "replies",
   }),
+  reactions: many(messageReactions),
 }));
+
+export const messageReactionsRelations = relations(
+  messageReactions,
+  ({ one, many }) => ({
+    message: one(messages, {
+      fields: [messageReactions.messageId],
+      references: [messages.id],
+    }),
+    reactedBy: many(messageReactionUsers),
+  }),
+);
+
+export const messageReactionUsersRelations = relations(
+  messageReactionUsers,
+  ({ one }) => ({
+    reaction: one(messageReactions, {
+      fields: [messageReactionUsers.reactionId],
+      references: [messageReactions.id],
+    }),
+    user: one(users, {
+      fields: [messageReactionUsers.userId],
+      references: [users.id],
+    }),
+  }),
+);
 
 export const channelsRelations = relations(channels, ({ one }) => ({
   category: one(categories, {
@@ -274,6 +342,7 @@ export const serversRelations = relations(servers, ({ one, many }) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  messageReactionUsers: many(messageReactionUsers),
 }));
 
 export const accounts = createTable(

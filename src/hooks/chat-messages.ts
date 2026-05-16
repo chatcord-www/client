@@ -5,6 +5,17 @@ export type ChatMessage = {
   id: string;
   createdAt: Date,
   editedAt?: Date;
+  reactions: {
+    id: string;
+    emoji: string;
+    count: number;
+    reacted: boolean;
+    users: {
+      id: string;
+      name: string | null;
+      avatar: string | null;
+    }[];
+  }[];
   replyToId?: string;
   replyTo?: {
     id: string;
